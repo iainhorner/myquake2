@@ -1,0 +1,9 @@
+build/
+game-mod/debug/
+game-mod/release/
+.vs/
+debug/
+game-mod/UpgradeLog.htm
+Dedicated Only/
+*.exp
+release/
