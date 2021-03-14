@@ -186,7 +186,7 @@ void BeginIntermission (edict_t *targ)
 				gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
 			}
 		}
-		else if(highScore >= 1)
+		else if(highScore == game.clients[i].resp.score)
 			gi.bprintf(PRINT_MEDIUM, "%s is joint winner!!!\n", client->client->pers.netname);
 
 		MoveClientToIntermission (client);
