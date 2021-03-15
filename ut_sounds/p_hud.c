@@ -169,7 +169,7 @@ void BeginIntermission (edict_t *targ)
 		if (!client->inuse)
 			continue;
 		if (highScorers == 1) {
-			if (game.clients[i].resp.deaths == 0 && highScore == game.clients[i].resp.score) {
+			if (game.clients[i].resp.score > 0 && game.clients[i].resp.deaths == 0 && highScore == game.clients[i].resp.score) {
 				edict_t* timer = G_Spawn();
 				timer->think = kill_delayedsound;
 				timer->nextthink = level.time + killsoundDelay;
@@ -177,7 +177,7 @@ void BeginIntermission (edict_t *targ)
 				timer->activator = client;
 				gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
 			}
-			else if (highScore == game.clients[i].resp.score) {
+			else if (game.clients[i].resp.score > 0 && highScore == game.clients[i].resp.score) {
 				edict_t* timer = G_Spawn();
 				timer->think = kill_delayedsound;
 				timer->nextthink = level.time + killsoundDelay;
