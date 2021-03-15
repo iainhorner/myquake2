@@ -154,7 +154,7 @@ void BeginIntermission(edict_t* targ)
 		score = game.clients[i].resp.score;
 		deaths = game.clients[i].resp.deaths;
 
-		if (deaths == 0 && highScore == score) {
+		if (score >0 && deaths == 0 && highScore == score) {
 			edict_t* timer = G_Spawn();
 			timer->think = kill_delayedsound;
 			timer->nextthink = level.time + killsoundDelay;
@@ -162,7 +162,7 @@ void BeginIntermission(edict_t* targ)
 			timer->activator = client;
 			gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
 		}
-		else if (highScore == score) {
+		else if (score > 0 && highScore == score) {
 			edict_t* timer = G_Spawn();
 			timer->think = kill_delayedsound;
 			timer->nextthink = level.time + killsoundDelay;
@@ -170,9 +170,6 @@ void BeginIntermission(edict_t* targ)
 			timer->activator = client;
 			gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
 		}
-		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/flawless_victory.wav"), 1, ATTN_NORM, 0);
-		//else if (level.total_frags == score)
-		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/winner.wav"), 1, ATTN_NORM, 0);
 
 		MoveClientToIntermission(client);
 	}
