@@ -56,10 +56,11 @@ void MoveClientToIntermission (edict_t *ent)
 
 }
 
-void BeginIntermission (edict_t *targ)
+void BeginIntermission(edict_t* targ)
 {
-	int		i, n;
-	edict_t	*ent, *client;
+	int		i;//n
+	int		score, deaths;
+	edict_t* ent, * client;
 
 	if (level.intermissiontime)
 		return;		// already activated
@@ -67,7 +68,7 @@ void BeginIntermission (edict_t *targ)
 	game.autosaved = false;
 
 	// respawn any dead clients
-	for (i=0 ; i<maxclients->value ; i++)
+	for (i = 0; i < maxclients->value; i++) //HACK: get number of connected clients here!?!"
 	{
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
@@ -76,10 +77,10 @@ void BeginIntermission (edict_t *targ)
 			respawn(client);
 	}
 
-	level.intermissiontime = level.time;
+	level.intermissiontime = level.time + 8;
 	level.changemap = targ->map;
 
-	if (strstr(level.changemap, "*"))
+	/*if (strstr(level.changemap, "*"))
 	{
 		if (coop->value)
 		{
@@ -104,39 +105,76 @@ void BeginIntermission (edict_t *targ)
 			level.exitintermission = 1;		// go immediately to the next level
 			return;
 		}
-	}
+
+	}*/
 
 	level.exitintermission = 0;
 
 	// find an intermission spot
-	ent = G_Find (NULL, FOFS(classname), "info_player_intermission");
+	ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
 	if (!ent)
 	{	// the map creator forgot to put in an intermission point...
-		ent = G_Find (NULL, FOFS(classname), "info_player_start");
+		ent = G_Find(NULL, FOFS(classname), "info_player_start");
 		if (!ent)
-			ent = G_Find (NULL, FOFS(classname), "info_player_deathmatch");
+			ent = G_Find(NULL, FOFS(classname), "info_player_deathmatch");
 	}
 	else
 	{	// chose one of four spots
 		i = rand() & 3;
 		while (i--)
 		{
-			ent = G_Find (ent, FOFS(classname), "info_player_intermission");
+			ent = G_Find(ent, FOFS(classname), "info_player_intermission");
 			if (!ent)	// wrap around the list
-				ent = G_Find (ent, FOFS(classname), "info_player_intermission");
+				ent = G_Find(ent, FOFS(classname), "info_player_intermission");
 		}
 	}
 
-	VectorCopy (ent->s.origin, level.intermission_origin);
-	VectorCopy (ent->s.angles, level.intermission_angle);
+	VectorCopy(ent->s.origin, level.intermission_origin);
+	VectorCopy(ent->s.angles, level.intermission_angle);
 
-	// move all clients to the intermission point
-	for (i=0 ; i<maxclients->value ; i++)
+	int highScore = 0;
+	for (i = 0; i < maxclients->value; i++)
 	{
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
 			continue;
-		MoveClientToIntermission (client);
+		if (game.clients[i].resp.score > highScore)
+			highScore = game.clients[i].resp.score;
+
+
+	}
+
+	// move all clients to the intermission point
+	int killsoundDelay = 3.0;
+	for (i = 0; i < maxclients->value; i++)
+	{
+		client = g_edicts + 1 + i;
+		if (!client->inuse)
+			continue;
+		score = game.clients[i].resp.score;
+		deaths = game.clients[i].resp.deaths;
+
+		if (deaths == 0 && highScore == score) {
+			edict_t* timer = G_Spawn();
+			timer->think = kill_delayedsound;
+			timer->nextthink = level.time + killsoundDelay;
+			timer->soundindex = gi.soundindex("ut_sounds/flawless_victory.wav");
+			timer->activator = client;
+			gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
+		}
+		else if (highScore == score) {
+			edict_t* timer = G_Spawn();
+			timer->think = kill_delayedsound;
+			timer->nextthink = level.time + killsoundDelay;
+			timer->soundindex = gi.soundindex("ut_sounds/winner.wav");
+			timer->activator = client;
+			gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
+		}
+		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/flawless_victory.wav"), 1, ATTN_NORM, 0);
+		//else if (level.total_frags == score)
+		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/winner.wav"), 1, ATTN_NORM, 0);
+
+		MoveClientToIntermission(client);
 	}
 }
 

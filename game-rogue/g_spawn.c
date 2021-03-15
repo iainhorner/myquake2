@@ -1072,6 +1072,22 @@ void SP_worldspawn (edict_t *ent)
 	// gibs
 	gi.soundindex ("items/respawn1.wav");
 
+	//ut sounds
+	gi.soundindex("ut_sounds/cd1min.wav");
+	gi.soundindex("ut_sounds/cd3min.wav");
+	gi.soundindex("ut_sounds/firstblood.wav");
+	gi.soundindex("ut_sounds/winner.wav");
+	gi.soundindex("ut_sounds/flawless_victory.wav");
+	gi.soundindex("ut_sounds/killingspree.wav");
+	gi.soundindex("ut_sounds/rampage.wav");
+	gi.soundindex("ut_sounds/dominating.wav");
+	gi.soundindex("ut_sounds/unstoppable.wav");
+	gi.soundindex("ut_sounds/godlike.wav");
+	gi.soundindex("ut_sounds/multikill.wav");
+	gi.soundindex("ut_sounds/megakill.wav");
+	gi.soundindex("ut_sounds/ultrakill.wav");
+	gi.soundindex("ut_sounds/monsterkill.wav");
+
 	// sexed sounds
 	gi.soundindex ("*death1.wav");
 	gi.soundindex ("*death2.wav");

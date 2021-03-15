@@ -201,309 +201,449 @@ qboolean IsNeutral (edict_t *ent)
 	return false;
 }
 
-void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
+void kill_delayedsound(edict_t* self)
+{
+	gi.sound(self->activator, CHAN_AUTO, self->soundindex, 1, ATTN_NORM, 0);
+	G_FreeEdict(self); // free the timer, otherwise you will eventually run out of entity slots
+
+}
+
+void ClientObituary(edict_t* self, edict_t* inflictor, edict_t* attacker)
 {
 	int			mod;
-	char		*message;
-	char		*message2;
+	char* message;
+	char* message2;
 	qboolean	ff;
 
-	if (coop->value && attacker->client)
-		meansOfDeath |= MOD_FRIENDLY_FIRE;
+	//	if (coop->value && attacker->client)
+	//		meansOfDeath |= MOD_FRIENDLY_FIRE;
 
-	if (deathmatch->value || coop->value)
+	//	if (deathmatch->value || coop->value)
+	//	{
+	ff = meansOfDeath & MOD_FRIENDLY_FIRE;
+	mod = meansOfDeath & ~MOD_FRIENDLY_FIRE;
+	message = NULL;
+	message2 = "";
+
+	switch (mod)
 	{
-		ff = meansOfDeath & MOD_FRIENDLY_FIRE;
-		mod = meansOfDeath & ~MOD_FRIENDLY_FIRE;
-		message = NULL;
-		message2 = "";
+	case MOD_SUICIDE:
+		message = "suicides";
+		break;
+	case MOD_FALLING:
+		message = "cratered";
+		break;
+	case MOD_CRUSH:
+		message = "was squished";
+		break;
+	case MOD_WATER:
+		message = "sank like a rock";
+		break;
+	case MOD_SLIME:
+		message = "melted";
+		break;
+	case MOD_LAVA:
+		message = "does a back flip into the lava";
+		break;
+	case MOD_EXPLOSIVE:
+	case MOD_BARREL:
+		message = "blew up";
+		break;
+	case MOD_EXIT:
+		message = "found a way out";
+		break;
+	case MOD_TARGET_LASER:
+		message = "saw the light";
+		break;
+	case MOD_TARGET_BLASTER:
+		message = "got blasted";
+		break;
+	case MOD_BOMB:
+	case MOD_SPLASH:
+	case MOD_TRIGGER_HURT:
+		message = "was in the wrong place";
+		break;
+	}
 
+	if (attacker == self)
+	{
 		switch (mod)
 		{
-			case MOD_SUICIDE:
-				message = "suicides";
-				break;
-			case MOD_FALLING:
-				message = "cratered";
-				break;
-			case MOD_CRUSH:
-				message = "was squished";
-				break;
-			case MOD_WATER:
-				message = "sank like a rock";
-				break;
-			case MOD_SLIME:
-				message = "melted";
-				break;
-			case MOD_LAVA:
-				message = "does a back flip into the lava";
-				break;
-			case MOD_EXPLOSIVE:
-			case MOD_BARREL:
-				message = "blew up";
-				break;
-			case MOD_EXIT:
-				message = "found a way out";
-				break;
-			case MOD_TARGET_LASER:
-				message = "saw the light";
-				break;
-			case MOD_TARGET_BLASTER:
-				message = "got blasted";
-				break;
-			case MOD_BOMB:
-			case MOD_SPLASH:
-			case MOD_TRIGGER_HURT:
-				message = "was in the wrong place";
-				break;
+		case MOD_HELD_GRENADE:
+			message = "tried to put the pin back in";
+			break;
+		case MOD_HG_SPLASH:
+		case MOD_G_SPLASH:
+			if (IsNeutral(self))
+				message = "tripped on its own grenade";
+			else if (IsFemale(self))
+				message = "tripped on her own grenade";
+			else
+				message = "tripped on his own grenade";
+			break;
+		case MOD_R_SPLASH:
+			if (IsNeutral(self))
+				message = "blew itself up";
+			else if (IsFemale(self))
+				message = "blew herself up";
+			else
+				message = "blew himself up";
+			break;
+		case MOD_BFG_BLAST:
+			message = "should have used a smaller gun";
+			break;
+		//ROGUE
+		case MOD_DOPPLE_EXPLODE:
+			if (IsNeutral(self))
+				message = "got caught in it's own trap";
+			else if (IsFemale(self))
+				message = "got caught in her own trap";
+			else
+				message = "got caught in his own trap";
+			break;
+		//ROGUE
+		default:
+			if (IsNeutral(self))
+				message = "killed itself";
+			else if (IsFemale(self))
+				message = "killed herself";
+			else
+				message = "killed himself";
+			break;
 		}
-		if (attacker == self)
+	}
+
+	if (message)
+	{
+		gi.bprintf(PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message);
+		//if (deathmatch->value) - Nick - always a DM
+		self->client->resp.score--;
+		self->client->resp.deaths++; // Nick 29/08/2005 - count deaths!
+		self->enemy = NULL;
+
+		if (self->client->resp.conseq_kills == 3)
 		{
-			switch (mod)
-			{
-				case MOD_HELD_GRENADE:
-					message = "tried to put the pin back in";
-					break;
-				case MOD_HG_SPLASH:
-				case MOD_G_SPLASH:
-					if (IsNeutral(self))
-						message = "tripped on its own grenade";
-					else if (IsFemale(self))
-						message = "tripped on her own grenade";
-					else
-						message = "tripped on his own grenade";
-					break;
-				case MOD_R_SPLASH:
-					if (IsNeutral(self))
-						message = "blew itself up";
-					else if (IsFemale(self))
-						message = "blew herself up";
-					else
-						message = "blew himself up";
-					break;
-				case MOD_BFG_BLAST:
-					message = "should have used a smaller gun";
-					break;
-//ROGUE
-				case MOD_DOPPLE_EXPLODE:
-					if (IsNeutral(self))
-						message = "got caught in it's own trap";
-					else if (IsFemale(self))
-						message = "got caught in her own trap";
-					else
-						message = "got caught in his own trap";
-					break;
-//ROGUE
-				default:
-					if (IsNeutral(self))
-						message = "killed itself";
-					else if (IsFemale(self))
-						message = "killed herself";
-					else
-						message = "killed himself";
-					break;
-			}
+			gi.bprintf(PRINT_MEDIUM, "%s's killing spree was stopped because %s  %s\n", self->client->pers.netname, self->client->pers.netname, message);
 		}
+		if (self->client->resp.conseq_kills == 6)
+		{
+			gi.bprintf(PRINT_MEDIUM, "%s's rampage was stopped because %s  %s\n", self->client->pers.netname, self->client->pers.netname, message);
+		}
+		if (self->client->resp.conseq_kills == 9)
+		{
+			gi.bprintf(PRINT_MEDIUM, "%s's dominatination was stopped because %s  %s\n", self->client->pers.netname, self->client->pers.netname, message);
+		}
+		if (self->client->resp.conseq_kills == 12)
+		{
+			gi.bprintf(PRINT_MEDIUM, "%s being unstoppable was stopped because %s  %s\n", self->client->pers.netname, self->client->pers.netname, message);
+		}
+		if (self->client->resp.conseq_kills == 15)
+		{
+			gi.bprintf(PRINT_MEDIUM, "%s being godlike was stopped because %s  %s\n", self->client->pers.netname, self->client->pers.netname, message);
+		}
+
+		self->client->resp.conseq_kills = 0;
+		self->client->resp.rapid_kills = 0;
+		self->client->resp.lastKillTime = 0;
+
+		return;
+	}
+
+	self->enemy = attacker;
+	if (attacker && attacker->client)
+	{
+		switch (mod)
+		{
+		case MOD_BLASTER:
+			message = "was blasted by";
+			break;
+		case MOD_SHOTGUN:
+			message = "was gunned down by";
+			break;
+		case MOD_SSHOTGUN:
+			message = "was blown away by";
+			message2 = "'s super shotgun";
+			break;
+		case MOD_MACHINEGUN:
+			message = "was machinegunned by";
+			break;
+		case MOD_CHAINGUN:
+			message = "was cut in half by";
+			message2 = "'s chaingun";
+			break;
+		case MOD_GRENADE:
+			message = "was popped by";
+			message2 = "'s grenade";
+			break;
+		case MOD_G_SPLASH:
+			message = "was shredded by";
+			message2 = "'s shrapnel";
+			break;
+		case MOD_ROCKET:
+			message = "ate";
+			message2 = "'s rocket";
+			break;
+		case MOD_R_SPLASH:
+			message = "almost dodged";
+			message2 = "'s rocket";
+			break;
+		case MOD_HYPERBLASTER:
+			message = "was melted by";
+			message2 = "'s hyperblaster";
+			break;
+		case MOD_RAILGUN:
+			message = "was railed by";
+			break;
+		case MOD_BFG_LASER:
+			message = "saw the pretty lights from";
+			message2 = "'s BFG";
+			break;
+		case MOD_BFG_BLAST:
+			message = "was disintegrated by";
+			message2 = "'s BFG blast";
+			break;
+		case MOD_BFG_EFFECT:
+			message = "couldn't hide from";
+			message2 = "'s BFG";
+			break;
+		case MOD_HANDGRENADE:
+			message = "caught";
+			message2 = "'s handgrenade";
+			break;
+		case MOD_HG_SPLASH:
+			message = "didn't see";
+			message2 = "'s handgrenade";
+			break;
+		case MOD_HELD_GRENADE:
+			message = "feels";
+			message2 = "'s pain";
+			break;
+		case MOD_TELEFRAG:
+			message = "tried to invade";
+			message2 = "'s personal space";
+			break;
+	//===============
+	//ROGUE
+		case MOD_CHAINFIST:
+			message = "was shredded by";
+			message2 = "'s ripsaw";
+			break;
+		case MOD_DISINTEGRATOR:
+			message = "lost his grip courtesy of";
+			message2 = "'s disintegrator";
+			break;
+		case MOD_ETF_RIFLE:
+			message = "was perforated by";
+			break;
+		case MOD_HEATBEAM:
+			message = "was scorched by";
+			message2 = "'s plasma beam";
+			break;
+		case MOD_TESLA:
+			message = "was enlightened by";
+			message2 = "'s tesla mine";
+			break;
+		case MOD_PROX:
+			message = "got too close to";
+			message2 = "'s proximity mine";
+			break;
+		case MOD_NUKE:
+			message = "was nuked by";
+			message2 = "'s antimatter bomb";
+			break;
+		case MOD_VENGEANCE_SPHERE:
+			message = "was purged by";
+			message2 = "'s vengeance sphere";
+			break;
+		case MOD_DEFENDER_SPHERE:
+			message = "had a blast with";
+			message2 = "'s defender sphere";
+			break;
+		case MOD_HUNTER_SPHERE:
+			message = "was killed like a dog by";
+			message2 = "'s hunter sphere";
+			break;
+		case MOD_TRACKER:
+			message = "was annihilated by";
+			message2 = "'s disruptor";
+			break;
+		case MOD_DOPPLE_EXPLODE:
+			message = "was blown up by";
+			message2 = "'s doppleganger";
+			break;
+		case MOD_DOPPLE_VENGEANCE:
+			message = "was purged by";
+			message2 = "'s doppleganger";
+			break;
+		case MOD_DOPPLE_HUNTER:
+			message = "was hunted down by";
+			message2 = "'s doppleganger";
+			break;
+		//ROGUE
+		//===============
+		}
+
 		if (message)
 		{
-			gi.bprintf (PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message);
+			gi.bprintf(PRINT_MEDIUM, "%s %s %s%s\n", self->client->pers.netname, message, attacker->client->pers.netname, message2);
+			level.total_frags++;
+			int killsoundDelay = 1.0;
+
 			if (deathmatch->value)
-				self->client->resp.score--;
-			self->enemy = NULL;
-			return;
-		}
-
-		self->enemy = attacker;
-		if (attacker && attacker->client)
-		{
-			switch (mod)
 			{
-			case MOD_BLASTER:
-				message = "was blasted by";
-				break;
-			case MOD_SHOTGUN:
-				message = "was gunned down by";
-				break;
-			case MOD_SSHOTGUN:
-				message = "was blown away by";
-				message2 = "'s super shotgun";
-				break;
-			case MOD_MACHINEGUN:
-				message = "was machinegunned by";
-				break;
-			case MOD_CHAINGUN:
-				message = "was cut in half by";
-				message2 = "'s chaingun";
-				break;
-			case MOD_GRENADE:
-				message = "was popped by";
-				message2 = "'s grenade";
-				break;
-			case MOD_G_SPLASH:
-				message = "was shredded by";
-				message2 = "'s shrapnel";
-				break;
-			case MOD_ROCKET:
-				message = "ate";
-				message2 = "'s rocket";
-				break;
-			case MOD_R_SPLASH:
-				message = "almost dodged";
-				message2 = "'s rocket";
-				break;
-			case MOD_HYPERBLASTER:
-				message = "was melted by";
-				message2 = "'s hyperblaster";
-				break;
-			case MOD_RAILGUN:
-				message = "was railed by";
-				break;
-			case MOD_BFG_LASER:
-				message = "saw the pretty lights from";
-				message2 = "'s BFG";
-				break;
-			case MOD_BFG_BLAST:
-				message = "was disintegrated by";
-				message2 = "'s BFG blast";
-				break;
-			case MOD_BFG_EFFECT:
-				message = "couldn't hide from";
-				message2 = "'s BFG";
-				break;
-			case MOD_HANDGRENADE:
-				message = "caught";
-				message2 = "'s handgrenade";
-				break;
-			case MOD_HG_SPLASH:
-				message = "didn't see";
-				message2 = "'s handgrenade";
-				break;
-			case MOD_HELD_GRENADE:
-				message = "feels";
-				message2 = "'s pain";
-				break;
-			case MOD_TELEFRAG:
-				message = "tried to invade";
-				message2 = "'s personal space";
-				break;
+				if (ff) {
+					attacker->client->resp.score--;
+					self->client->resp.deaths++; // Nick 29/08/2005 - count deaths!
+				}
+				else {
+					attacker->client->resp.score++;
+					attacker->client->resp.conseq_kills++;
+					attacker->client->resp.rapid_kills++;
 
-//===============
-//ROGUE
-			case MOD_CHAINFIST:
-				message = "was shredded by";
-				message2 = "'s ripsaw";
-				break;
-			case MOD_DISINTEGRATOR:
-				message = "lost his grip courtesy of";
-				message2 = "'s disintegrator";
-				break;
-			case MOD_ETF_RIFLE:
-				message = "was perforated by";
-				break;
-			case MOD_HEATBEAM:
-				message = "was scorched by";
-				message2 = "'s plasma beam";
-				break;
-			case MOD_TESLA:
-				message = "was enlightened by";
-				message2 = "'s tesla mine";
-				break;
-			case MOD_PROX:
-				message = "got too close to";
-				message2 = "'s proximity mine";
-				break;
-			case MOD_NUKE:
-				message = "was nuked by";
-				message2 = "'s antimatter bomb";
-				break;
-			case MOD_VENGEANCE_SPHERE:
-				message = "was purged by";
-				message2 = "'s vengeance sphere";
-				break;
-			case MOD_DEFENDER_SPHERE:
-				message = "had a blast with";
-				message2 = "'s defender sphere";
-				break;
-			case MOD_HUNTER_SPHERE:
-				message = "was killed like a dog by";
-				message2 = "'s hunter sphere";
-				break;
-			case MOD_TRACKER:
-				message = "was annihilated by";
-				message2 = "'s disruptor";
-				break;
-			case MOD_DOPPLE_EXPLODE:
-				message = "was blown up by";
-				message2 = "'s doppleganger";
-				break;
-			case MOD_DOPPLE_VENGEANCE:
-				message = "was purged by";
-				message2 = "'s doppleganger";
-				break;
-			case MOD_DOPPLE_HUNTER:
-				message = "was hunted down by";
-				message2 = "'s doppleganger";
-				break;
-//ROGUE
-//===============
-			}
-			if (message)
-			{
-				gi.bprintf (PRINT_MEDIUM,"%s %s %s%s\n", self->client->pers.netname, message, attacker->client->pers.netname, message2);
-//ROGUE
-				if (gamerules && gamerules->value)
-				{
-					if(DMGame.Score)
+					if (attacker->client->resp.rapid_kills > 1 && level.time - attacker->client->resp.lastKillTime < 3)
 					{
-						if(ff)		
-							DMGame.Score(attacker, self, -1);
-						else
-							DMGame.Score(attacker, self, 1);
+						edict_t* timer = G_Spawn();
+
+						switch (attacker->client->resp.rapid_kills)
+						{
+						case 2:
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/doublekill.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s had a doublekill!!!\n", attacker->client->pers.netname);
+							break;
+						case 3:
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/multikill.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s had a multikill!!!\n", attacker->client->pers.netname);
+							break;
+						case 4:
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/megakill.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s had a megakill!!!\n", attacker->client->pers.netname);
+							break;
+						case 5:
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/ultrakill.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s had a ultrakill!!!\n", attacker->client->pers.netname);
+							break;
+						case 6:
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/monsterkill.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s had a monsterkill!!!\n", attacker->client->pers.netname);
+							attacker->client->resp.rapid_kills = 1;
+							break;
+						default:
+							break;
+						}
+
 					}
-					return;
-				}
-//ROGUE
-
-				if (deathmatch->value)
-				{
-					if (ff)
-						attacker->client->resp.score--;
 					else
-						attacker->client->resp.score++;
+					{
+						attacker->client->resp.rapid_kills = 1;
+
+						if (attacker->client->resp.conseq_kills == 3) {
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/killingspree.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s is on a killing spree!!!\n", attacker->client->pers.netname);
+						}
+						if (attacker->client->resp.conseq_kills == 6) {
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/rampage.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s is on a rampage!!!\n", attacker->client->pers.netname);
+						}
+						if (attacker->client->resp.conseq_kills == 9) {
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + 1.0;
+							timer->soundindex = gi.soundindex("ut_sounds/dominating.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s is dominating!!!\n", attacker->client->pers.netname);
+						}
+						if (attacker->client->resp.conseq_kills == 12) {
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/unstoppable.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s is unstoppable!!!\n", attacker->client->pers.netname);
+						}
+						if (attacker->client->resp.conseq_kills == 15) {
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/godlike.wav");
+							timer->activator = attacker;
+							gi.bprintf(PRINT_MEDIUM, "%s is godlike!!!\n", attacker->client->pers.netname);
+						}
+
+						if (level.total_frags == 1)
+						{
+							edict_t* timer = G_Spawn();
+							timer->think = kill_delayedsound;
+							timer->nextthink = level.time + killsoundDelay;
+							timer->soundindex = gi.soundindex("ut_sounds/firstblood.wav");
+							timer->activator = attacker;
+
+						}
+					}
+
+
+					self->client->resp.deaths++; // Nick 29/08/2005 - count deaths!
+
+					if (self->client->resp.conseq_kills == 3)
+					{
+						gi.bprintf(PRINT_MEDIUM, "%s's killing spree was stopped by %s\n", self->client->pers.netname, attacker->client->pers.netname);
+					}
+					if (self->client->resp.conseq_kills == 6)
+					{
+						gi.bprintf(PRINT_MEDIUM, "%s's rampage was stopped by %s\n", self->client->pers.netname, attacker->client->pers.netname);
+					}
+					if (self->client->resp.conseq_kills == 9)
+					{
+						gi.bprintf(PRINT_MEDIUM, "%s's dominatination was stopped by %s\n", self->client->pers.netname, attacker->client->pers.netname);
+					}
+					if (self->client->resp.conseq_kills == 12)
+					{
+						gi.bprintf(PRINT_MEDIUM, "%s being unstoppable was stopped by %s\n", self->client->pers.netname, attacker->client->pers.netname);
+					}
+					if (self->client->resp.conseq_kills == 15)
+					{
+						gi.bprintf(PRINT_MEDIUM, "%s being godlike was stopped by %s\n", self->client->pers.netname, attacker->client->pers.netname);
+					}
+
+
+					attacker->client->resp.lastKillTime = level.time;
+					self->client->resp.conseq_kills = 0;
+					self->client->resp.rapid_kills = 0;
+					self->client->resp.lastKillTime = 0;
+
 				}
-				return;
-			}
-		}
-	}
-
-	gi.bprintf (PRINT_MEDIUM,"%s died.\n", self->client->pers.netname);
-
-//ROGUE
-//	if (g_showlogic && g_showlogic->value)
-//	{
-//		if (mod == MOD_UNKNOWN)
-//			gi.dprintf ("Player killed by MOD_UNKNOWN\n");
-//		else
-//			gi.dprintf ("Player killed by undefined mod %d\n", mod);
-//	}
-//ROGUE
-
-	if (deathmatch->value)
-//ROGUE
-	{
-		if (gamerules && gamerules->value)
-		{
-			if(DMGame.Score)
-			{
-				DMGame.Score(self, self, -1);
 			}
 			return;
 		}
-		else
-			self->client->resp.score--;
 	}
-//ROGUE
+	//}
 
+	gi.bprintf(PRINT_MEDIUM, "%s died.\n", self->client->pers.netname);
+	//if (deathmatch->value)
+	self->client->resp.score--;
+	self->client->resp.deaths++; // Nick 29/08/2005 - count deaths!
 }
 
 

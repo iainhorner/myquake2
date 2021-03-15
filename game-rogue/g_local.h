@@ -375,6 +375,8 @@ typedef struct
 	int			total_goals;
 	int			found_goals;
 
+	int			total_frags;
+
 	int			total_monsters;
 	int			killed_monsters;
 
@@ -922,6 +924,7 @@ void InitClientPersistant (gclient_t *client);
 void InitClientResp (gclient_t *client);
 void InitBodyQue (void);
 void ClientBeginServerFrame (edict_t *ent);
+void kill_delayedsound(edict_t* self);
 
 //
 // g_player.c
@@ -1116,6 +1119,7 @@ typedef struct
 
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
+	int			deaths; // Nick 30/08/2005 - count deaths!	
 
 	int			game_helpchanged;
 	int			helpchanged;
@@ -1139,6 +1143,10 @@ typedef struct
 	client_persistant_t	coop_respawn;	// what to set client->pers to on a respawn
 	int			enterframe;			// level.framenum the client entered the game
 	int			score;				// frags, etc
+	int			deaths;				// Nick 29/08/2005 - deaths!
+	int			conseq_kills;
+	int			rapid_kills;
+	float       lastKillTime;
 	vec3_t		cmd_angles;			// angles sent over in the last command
 
 	qboolean	spectator;			// client is a spectator
@@ -1405,6 +1413,7 @@ struct edict_s
 	float		lastMoveTime;
 //ROGUE
 //=========
+	int			soundindex;
 };
 
 //=============
