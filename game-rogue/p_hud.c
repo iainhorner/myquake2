@@ -149,7 +149,7 @@ void BeginIntermission(edict_t* targ)
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
 			continue;
-		if (game.clients[i].resp.score == highScore)
+		if (game.clients[i].resp.score > 0 && game.clients[i].resp.score == highScore)
 			highScorers++;
 	}
 
@@ -160,26 +160,29 @@ void BeginIntermission(edict_t* targ)
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
 			continue;
-		if (highScorers == 1) {
-			if (game.clients[i].resp.score > 0 && game.clients[i].resp.deaths == 0 && highScore == game.clients[i].resp.score) {
-				edict_t* timer = G_Spawn();
-				timer->think = kill_delayedsound;
-				timer->nextthink = level.time + killsoundDelay;
-				timer->soundindex = gi.soundindex("ut_sounds/flawless_victory.wav");
-				timer->activator = client;
-				gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
+		if (highScorers > 0) {
+			if (highScorers == 1) {
+				if (game.clients[i].resp.score > 0 && game.clients[i].resp.deaths == 0 && highScore == game.clients[i].resp.score) {
+					edict_t* timer = G_Spawn();
+					timer->think = kill_delayedsound;
+					timer->nextthink = level.time + killsoundDelay;
+					timer->soundindex = gi.soundindex("ut_sounds/flawless_victory.wav");
+					timer->activator = client;
+					gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
+				}
+				else if (game.clients[i].resp.score > 0 && highScore == game.clients[i].resp.score) {
+					edict_t* timer = G_Spawn();
+					timer->think = kill_delayedsound;
+					timer->nextthink = level.time + killsoundDelay;
+					timer->soundindex = gi.soundindex("ut_sounds/winner.wav");
+					timer->activator = client;
+					gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
+				}
 			}
-			else if (game.clients[i].resp.score > 0 && highScore == game.clients[i].resp.score) {
-				edict_t* timer = G_Spawn();
-				timer->think = kill_delayedsound;
-				timer->nextthink = level.time + killsoundDelay;
-				timer->soundindex = gi.soundindex("ut_sounds/winner.wav");
-				timer->activator = client;
-				gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
-			}
+			else if (highScore == game.clients[i].resp.score)
+				gi.bprintf(PRINT_MEDIUM, "%s is joint winner!!!\n", client->client->pers.netname);
 		}
-		else if (highScore == game.clients[i].resp.score)
-			gi.bprintf(PRINT_MEDIUM, "%s is joint winner!!!\n", client->client->pers.netname);
+
 		MoveClientToIntermission(client);
 	}
 }
