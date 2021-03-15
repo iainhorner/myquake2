@@ -2125,7 +2125,7 @@ void Weapon_ETF_Rifle (edict_t *ent)
 
 // pgm - this now uses ent->client->pers.weapon->quantity like all the other weapons
 //#define HEATBEAM_AMMO_USE		2		
-#define	HEATBEAM_DM_DMG			15
+#define	HEATBEAM_DM_DMG			10 //original: 15
 #define HEATBEAM_SP_DMG			15
 
 void Heatbeam_Fire (edict_t *ent)
