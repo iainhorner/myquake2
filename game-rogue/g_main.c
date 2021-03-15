@@ -531,6 +531,18 @@ void CheckDMRules (void)
 			EndDMLevel ();
 			return;
 		}
+
+		if (!level.cd3min_played && level.time >= ((timelimit->value * 60) - (3 * 60)))
+		{
+			gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd3min.wav"), 1, ATTN_NONE, 0);
+			level.cd3min_played = true;
+		}
+
+		if (!level.cd1min_played && level.time >= ((timelimit->value * 60) - (1 * 60)))
+		{
+			gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd1min.wav"), 1, ATTN_NONE, 0);
+			level.cd1min_played = true;
+		}
 	}
 
 	if (fraglimit->value)
@@ -599,6 +611,9 @@ void G_RunFrame (void)
 
 	// choose a client for monsters to target this frame
 	AI_SetSightClient ();
+
+	if (level.intermissiontime && (level.intermissiontime + 8 < level.time))
+		level.exitintermission = true;
 
 	// exit intermissions
 

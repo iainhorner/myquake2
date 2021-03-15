@@ -377,6 +377,9 @@ typedef struct
 
 	int			total_frags;
 
+	qboolean     cd1min_played;
+	qboolean     cd3min_played;
+
 	int			total_monsters;
 	int			killed_monsters;
 
