@@ -74,7 +74,7 @@ typedef enum {false, true}	qboolean;
 
 
 #define MAX_MAPS        1000
-
+#define MAX_OLDMAPS	7
 
 #define	ERR_FATAL			0		// exit the entire game with a popup window
 #define	ERR_DROP			1		// print to console and disconnect from game

@@ -216,7 +216,9 @@ void InitGame (void)
 	flood_waitdelay = gi.cvar ("flood_waitdelay", "10", 0);
 
 	// dm map list
-	sv_maplist = gi.cvar ("sv_maplist", "", 0);
+	sv_maplist = gi.cvar("maplist_file", "", 0);
+	sv_map_file = gi.cvar("map_file", "mapcfg/maps.txt", 0);
+	sv_map_random = gi.cvar("map_random", "0", 0);
 	sv_pop_maplist = gi.cvar("maplist_file", "", 0);
 
 	//maplist

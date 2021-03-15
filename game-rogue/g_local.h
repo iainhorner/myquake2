@@ -658,6 +658,19 @@ extern	cvar_t	*flood_waitdelay;
 extern	cvar_t	*sv_maplist;
 extern	cvar_t	*sv_pop_maplist;
 
+extern  cvar_t	*sv_map_random;
+extern  cvar_t	*sv_map_file;
+extern  level_locals_t g_oldmaps[MAX_OLDMAPS];
+
+// Filetype info.
+typedef enum
+{
+	FILE_MAP,
+	FILE_MODEL,
+	FILE_SOUND,
+	FILE_TEXTURE
+} filetype_t;
+
 extern	cvar_t	*sv_stopspeed;		// PGM - this was a define in g_phys.c
 
 //ROGUE

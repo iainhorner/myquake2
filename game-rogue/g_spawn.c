@@ -991,6 +991,12 @@ Only used for the world.
 */
 void SP_worldspawn (edict_t *ent)
 {
+	int i;
+
+	for (i = MAX_OLDMAPS - 1; i > 0; --i)
+		strncpy(g_oldmaps[i].mapname, g_oldmaps[i - 1].mapname, sizeof(g_oldmaps[i].mapname));
+		strncpy(g_oldmaps[0].mapname, level.mapname, sizeof(g_oldmaps[0].mapname));
+
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
 	ent->inuse = true;			// since the world doesn't use G_Spawn()

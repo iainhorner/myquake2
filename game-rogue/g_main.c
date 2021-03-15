@@ -11,6 +11,8 @@ int	sm_meat_index;
 int	snd_fry;
 int meansOfDeath;
 
+level_locals_t g_oldmaps[MAX_OLDMAPS];
+
 edict_t		*g_edicts;
 
 cvar_t	*deathmatch;
@@ -52,6 +54,8 @@ cvar_t	*flood_waitdelay;
 
 cvar_t	*sv_maplist;
 cvar_t	*sv_pop_maplist;
+cvar_t	*sv_map_file;
+cvar_t	*sv_map_random;
 
 cvar_t	*sv_stopspeed;	//PGM	 (this was a define in g_phys.c)
 
@@ -200,65 +204,298 @@ edict_t *CreateTargetChangeLevel(char *map)
 	return ent;
 }
 
+//Nick - 07/09/2005 - Random map stuff - Musashi
+/*
+=================
+FindNextMap
+
+Returns the BSP name of the next map in the server's map list after the current level.
+=================
+*/
+char* FindNextMap(FILE* iostream)
+{
+	char            bspname[MAX_QPATH];
+	char* buf = NULL;
+	qboolean        finished = false;
+	qboolean        found_first;
+	int                     fnum;
+	int                     nmaps = 0;
+
+	while (!finished)
+	{
+		fnum = fscanf(iostream, "%s", bspname);
+		if (fnum != EOF)
+		{
+			if ((bspname[0] == '/') && (bspname[1] == '/')) //ignore commented-out lines
+				continue;
+
+			++nmaps;
+			if (Q_stricmp(level.mapname, bspname) == 0)
+			{
+				finished = true;
+				fnum = fscanf(iostream, "%s", bspname);
+				if ((fnum == EOF) || ((bspname[0] == '/') && (bspname[1] == '/'))) //current map is las$
+				{
+					rewind(iostream);
+					found_first = false;
+					while (!found_first)
+					{
+						fscanf(iostream, "%s", bspname);
+						if ((bspname[0] == '/') && (bspname[1] == '/'))
+							continue;
+						else
+							found_first = true;
+					}
+				}
+			}
+		}
+		else    //current map not in list, or map list empty
+		{
+			finished = true;
+			if (nmaps > 0)  //there's at least one map in the list, so select the first
+			{
+				rewind(iostream);
+				found_first = false;
+				while (!found_first)
+				{
+					fscanf(iostream, "%s", bspname);
+					if ((bspname[0] == '/') && (bspname[1] == '/'))
+						continue;
+					else
+						found_first = true;
+				}
+			}
+			else
+			{
+				gi.dprintf("** Map list is empty\n");
+				sprintf(bspname, "q2dm1");
+			}
+		}
+	}
+	//if (strlen(bspname))
+	if (Q_strlenz(bspname))
+		buf = G_CopyString(bspname);
+
+	return buf;
+}
+//CW--
+
+//CW++
+/*
+=================
+FindRandomMap
+
+Returns a BSP name from the server's map list (apart from the current level).
+=================
+*/
+char* FindRandomMap(FILE* iostream)
+{
+	char            bspname[MAX_QPATH];
+	char* buf = NULL;
+	qboolean        finished = false;
+	qboolean        match_found;
+	int                     fnum;
+	int                     nmaps = 0;
+	int                     nmaps_diff = 0;
+	int                     count;
+	int                     iterations = 0;
+	int                     i;
+	int			nmapsinlist; // Nick - replace MAX_OLDMAPS define.
+
+//      Count the number of bsp names, and the number of bsp names that are different to the current
+//      one, in the server's map list.
+	while (!finished)
+	{
+		fnum = fscanf(iostream, "%s", bspname);
+		if (fnum != EOF)
+		{
+			if ((bspname[0] == '/') && (bspname[1] == '/')) //ignore commented-out lines
+				continue;
+
+			++nmaps;
+			if (!Q_stricmp(level.mapname, bspname) == 0)
+				++nmaps_diff;
+		}
+		else
+			finished = true;
+	}
+
+	// If there's at least one bsp name that's different to the current one, randomly select one
+	// from the map list.
+
+	if (nmaps > 0)
+	{
+		if (nmaps_diff > 0)
+		{
+			finished = false;
+			while (!finished)
+			{
+				rewind(iostream);
+				count = (rand() % nmaps) + 1;
+				while (count > 0)
+				{
+					if ((bspname[0] == '/') && (bspname[1] == '/'))         //ignore commented-out $
+						continue;
+
+					--count;
+					fnum = fscanf(iostream, "%s", bspname);
+					if (fnum == EOF)        // shouldn't happen!
+					{
+						finished = true;
+						break;
+					}
+				}
+
+				//Compare it to the list of the last MAX_OLDMAPS bsps played.
+				//Choose again if it's in this recent-bsp list, unless the number of unique maps
+				//in the server's map list is <= MAX_OLDMAPS (ie. we're going to get repetitions
+				//within the recent-bsp list). Don't replay the last map if possible.
+
+				if (nmaps_diff >= MAX_OLDMAPS)
+				{
+					match_found = false;
+					for (i = 0; i < MAX_OLDMAPS; i++)
+					{
+						//gi.dprintf("g_oldmap: %s\n", g_oldmaps[i].mapname);
+
+						if ((Q_stricmp(g_oldmaps[i].mapname, bspname) == 0))
+							match_found = true;
+					}
+					if (!match_found)
+						finished = true;
+				}
+				else
+				{
+					if (!Q_stricmp(level.mapname, bspname) == 0)
+						finished = true;
+				}
+
+				//If we've done a few iterations without producing a valid selection, it's likely
+				//that the server's map list is full of repeated bsp names (which b0rks the
+				//selection algorithm). In this case, just use the last bsp name chosen.
+
+
+				if (++iterations > 10)
+					finished = true;
+			}
+
+		}
+		else    // no different maps, so replay the current one
+		{
+			gi.dprintf("** Map list has no different maps\n");
+			sprintf(bspname, level.mapname);
+		}
+	}
+	else
+	{
+		gi.dprintf("** Map list is empty\n");
+		sprintf(bspname, "q2dm1");
+	}
+
+	//if (strlen(bspname))
+	if (Q_strlenz(bspname))
+		buf = G_CopyString(bspname);
+
+	return buf;
+}
 /*
 =================
 EndDMLevel
 
-The timelimit or fraglimit has been exceeded
+The timelimit or fraglimit has been exceeded.
 =================
 */
-void EndDMLevel (void)
+void EndDMLevel(void)
 {
-	edict_t		*ent;
-	char *s, *t, *f;
-	static const char *seps = " ,\n\r";
+	edict_t* ent;
 
-	// stay on same level flag
+	//CW++
+	FILE* mapstream;
+	char    bspname[MAX_QPATH];
+	char    endmsg[130];
+
+
+	//level.starttime = 0.0;
+
+//      Write the players' scores to the console.
+
+// Nick change this to use original
+//      if (sv_gametype->value == G_FFA)
+//              PrintFFAScores();
+//      else
+//              PrintTeamScores();
+// End Nick
+
+//CW--
+
+		// stay on same level flag
 	if ((int)dmflags->value & DF_SAME_LEVEL)
 	{
-		BeginIntermission (CreateTargetChangeLevel (level.mapname) );
+		BeginIntermission(CreateTargetChangeLevel(level.mapname));
 		return;
 	}
 
-	// see if it's in the map list
-	if (*sv_maplist->string) {
-		s = strdup(sv_maplist->string);
-		f = NULL;
-		t = strtok(s, seps);
-		while (t != NULL) {
-			if (Q_stricmp(t, level.mapname) == 0) {
-				// it's in the list, go to the next one
-				t = strtok(NULL, seps);
-				if (t == NULL) { // end of list, go to first one
-					if (f == NULL) // there isn't a first one, same level
-						BeginIntermission (CreateTargetChangeLevel (level.mapname) );
-					else
-						BeginIntermission (CreateTargetChangeLevel (f) );
-				} else
-					BeginIntermission (CreateTargetChangeLevel (t) );
-				free(s);
-				return;
-			}
-			if (!f)
-				f = t;
-			t = strtok(NULL, seps);
-		}
-		free(s);
-	}
 
-	if (level.nextmap[0]) // go to a specific map
-		BeginIntermission (CreateTargetChangeLevel (level.nextmap) );
-	else {	// search for a changelevel
-		ent = G_Find (NULL, FOFS(classname), "target_changelevel");
-		if (!ent)
-		{	// the map designer didn't include a changelevel,
-			// so create a fake ent that goes back to the same level
-			BeginIntermission (CreateTargetChangeLevel (level.mapname) );
+	//      if (*level.forcemap)
+	//      {
+	//CW++
+	//              Check that the bsp exists. If not, then reload the current level.
+	//
+	//              if (!FileExists(level.forcemap, FILE_MAP))
+	//              {
+	//                      gi_bprintf(PRINT_CHAT, "** Cannot open bsp: \"%s\"\n   (Restarting current level).\n\n", level.$
+	//                      BeginIntermission(CreateTargetChangeLevel(level.mapname));
+	//              }
+	//              else
+	//CW--
+	//                      BeginIntermission(CreateTargetChangeLevel(level.forcemap));
+	//
+	//              return;
+	//      }
+
+	//CW++
+	//      Select a map from the list (either randomly or sequentially, as flagged).
+
+	mapstream = (FILE*)OpenMaplistFile(true);
+	if (mapstream != (FILE*)0)
+	{
+		if (sv_map_random->value)
+			sprintf(bspname, "%s", FindRandomMap(mapstream));
+		else
+			sprintf(bspname, "%s", FindNextMap(mapstream));
+
+		fclose(mapstream);
+		//gi.dprintf("File closed\n");
+//              Check that the bsp exists. If not, then reload the current level.
+
+		if (!FileExists(bspname, FILE_MAP))
+		{
+			//gi_bprintf(PRINT_CHAT, "** Cannot open bsp: \"%s\"\n   (Restarting current level).\n\n", bspn$
+			BeginIntermission(CreateTargetChangeLevel(level.mapname));
 			return;
 		}
-		BeginIntermission (ent);
+
+		//gi.bprintf (PRINT_CHAT, "Next Map: %s\n", bspname);
+
+		BeginIntermission(CreateTargetChangeLevel(bspname));
+		return;
+	}
+	//CW--
+
+	if (level.nextmap[0])                   // go to a specific map
+		BeginIntermission(CreateTargetChangeLevel(level.nextmap));
+	else                                                    // search for a changelevel
+	{
+		ent = G_Find(NULL, FOFS(classname), "target_changelevel");
+		if (!ent)
+		{       // the map designer didn't include a changelevel, so create a fake ent that goes back to the sa$
+			BeginIntermission(CreateTargetChangeLevel(level.mapname));
+			return;
+		}
+		BeginIntermission(ent);
 	}
 }
+// End Nick
 
 /*
 =================

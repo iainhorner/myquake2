@@ -84,6 +84,36 @@ char* Q_strcatz(char* dest, const char* src)
 	return tmp;
 }
 
+char* Q_strcpyz(char* dest, const char* src)
+{
+	char* tmp = dest;
+
+	while ((*dest++ = *src++) != '\0')
+		/* nothing */;
+	return tmp;
+}
+
+// Nick - this is called from q_shared.h macro Q_strncpy, which adds a '\0'
+
+char* Q_strncpyz(char* dest, const char* src, size_t count)
+{
+	char* tmp = dest;
+
+	while (count-- && (*dest++ = *src++) != '\0')
+		/* nothing */;
+
+	return tmp;
+}
+
+size_t Q_strlenz(const char* s)
+{
+	const char* sc;
+
+	for (sc = s; *sc != '\0'; ++sc)
+		/* nothing */;
+	return sc - s;
+}
+
 
 void AngleVectors (vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {

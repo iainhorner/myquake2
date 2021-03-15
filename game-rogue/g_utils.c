@@ -710,3 +710,198 @@ qboolean KillBox (edict_t *ent)
 
 	return true;		// all clear
 }
+
+
+//DH++
+// Written by David Hyde for the Lazarus mod.
+/*
+===============================
+Checks that the specified file is inside a PAK.
+===============================
+*/
+
+typedef struct
+{
+	char id[4]; // Should be 'PACK'
+	int dstart; // Offest in the file to the directory
+	int dsize;  // Size in bytes of the directory, same as num_items*64
+} pak_header_t;
+
+typedef struct
+{
+	char name[56]; // The name of the item, normal C string
+	int start; // Offset in .pak file to start of item
+	int size; // Size of item in bytes
+} pak_item_t;
+
+
+
+qboolean
+InPak(char* basedir, char* gamedir, char* filename)
+{
+	char pakfile[MAX_OSPATH];
+	FILE* f;
+	pak_header_t pakheader;
+	pak_item_t pakitem;
+	qboolean found = false;
+	int k;
+	int kk;
+	int num;
+	int numitems;
+
+	// Search paks in the game folder.
+
+	for (k = 9; (k >= 0) && !found; k--)
+	{
+		//strcpy (pakfile, basedir);
+		Q_strcpyz(pakfile, basedir);
+		//if (strlen (gamedir))
+		if (Q_strlenz(gamedir))
+		{
+			//strcat (pakfile, "/");
+			//strcat (pakfile, gamedir);
+			Q_strcatz(pakfile, "/");
+			Q_strcatz(pakfile, gamedir);
+		}
+		//strcat (pakfile, va ("/pak%d.pak", k));
+		Q_strcatz(pakfile, va("/pak%d.pak", k));
+
+		if (NULL != (f = fopen(pakfile, "rb")))
+		{
+			num = fread(&pakheader, 1, sizeof(pak_header_t), f);
+			if (num >= sizeof(pak_header_t))
+			{
+				if ((pakheader.id[0] == 'P') && (pakheader.id[1] == 'A') &&
+					(pakheader.id[2] == 'C') && (pakheader.id[3] == 'K'))
+				{
+					numitems = pakheader.dsize / sizeof(pak_item_t);
+					fseek(f, pakheader.dstart, SEEK_SET);
+					for (kk = 0; (kk < numitems) && !found; kk++)
+					{
+						fread(&pakitem, 1, sizeof(pak_item_t), f);
+						if (!Q_stricmp(pakitem.name, filename))
+							found = true;
+					}
+				}
+			}
+			fclose(f);
+		}
+	}
+
+	return found;
+}
+
+//DH--
+
+
+//CW++
+/*
+===============================
+Checks that the specified file exists.
+NB: This function assumes that the file specified as 'checkname' has no extension.
+
+This is based on code written by David Hyde for the Lazarus mod.
+===============================
+*/
+qboolean FileExists(char* checkname, filetype_t ftype)
+{
+	FILE* fstream;
+	cvar_t* basedir;
+	cvar_t* gamedir;
+	char    filename[MAX_OSPATH];
+	char    path[MAX_OSPATH];
+
+	basedir = gi.cvar("basedir", "", 0);
+	gamedir = gi.cvar("gamedir", "", 0);
+
+	switch (ftype)
+	{
+	case FILE_MAP:
+		sprintf(path, "maps/%s.bsp", checkname);
+		break;
+
+	case FILE_MODEL:
+		sprintf(path, "models/%s.md2", checkname);
+		break;
+
+	case FILE_SOUND:
+		sprintf(path, "sound/%s.wav", checkname);
+		break;
+
+	case FILE_TEXTURE:
+		sprintf(path, "textures/%s.wal", checkname);
+		break;
+
+	default:
+		sprintf(path, "%s", checkname);
+		break;
+	}
+	//if (strlen(gamedir->string))
+	if (Q_strlenz(gamedir->string))
+	{
+
+		//              Search in the game directory for external file.
+
+		sprintf(filename, "%s/%s/%s", basedir->string, gamedir->string, path);
+		if ((fstream = fopen(filename, "r")) != NULL)
+		{
+			fclose(fstream);
+			return true;
+		}
+
+		//              Search paks in the game directory.
+
+		if (InPak(basedir->string, gamedir->string, path))
+			return true;
+	}
+
+	//      Search in the 'baseq2' directory for external file.
+
+	sprintf(filename, "%s/baseq2/%s", basedir->string, path);
+	if ((fstream = fopen(filename, "r")) != NULL)
+	{
+		fclose(fstream);
+		return true;
+	}
+
+	//      Search paks in the 'baseq2' directory.
+
+	if (InPak(basedir->string, "baseq2", path))
+		return true;
+
+	return false;
+}
+//CW--
+
+//CW++
+FILE* OpenMaplistFile(qboolean report)
+{
+	FILE* iostream;
+	cvar_t* game;
+	char    filename[MAX_OSPATH];
+
+	//if (strlen(sv_map_file->string) == 0)
+	if (Q_strlenz(sv_map_file->string) == 0)
+		return NULL;
+
+	game = gi.cvar("game", "", 0);
+	if (!*game->string)
+		sprintf(filename, "%s/%s", GAMEVERSION, sv_map_file->string);
+	else
+		sprintf(filename, "%s/%s", game->string, sv_map_file->string);
+
+	iostream = fopen(filename, "r");
+	//        gi.dprintf("File opened\n");
+
+	if (report)
+	{
+		if (iostream == (FILE*)0)
+			//if (iostream == NULL)
+					//gi.dprintf("Map list \"%s\" opened\n", filename);
+			//else
+			gi.dprintf("** Failed to open \"%s\" **\n", filename);
+	}
+
+	return iostream;
+}
+//CW--
