@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game-tdm", "game-tdm\game-t
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game-rogue", "game-rogue\rogue.vcxproj", "{06D8A8F5-72BB-4753-B858-B8BAC5A5528D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game-rogtrix", "game-rogtrix\game-rogtrix.vcxproj", "{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Alpha|x64 = Debug Alpha|x64
@@ -193,6 +195,25 @@ Global
 		{06D8A8F5-72BB-4753-B858-B8BAC5A5528D}.Template|x64.Build.0 = Debug|Win32
 		{06D8A8F5-72BB-4753-B858-B8BAC5A5528D}.Template|x86.ActiveCfg = Debug|Win32
 		{06D8A8F5-72BB-4753-B858-B8BAC5A5528D}.Template|x86.Build.0 = Debug|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug Alpha|x64.ActiveCfg = Debug Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug Alpha|x86.ActiveCfg = Debug Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug Alpha|x86.Build.0 = Debug Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug|x64.ActiveCfg = Debug|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug|x86.ActiveCfg = Debug|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Debug|x86.Build.0 = Debug|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Dedicated Only|x64.ActiveCfg = Release|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Dedicated Only|x64.Build.0 = Release|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Dedicated Only|x86.ActiveCfg = Debug Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Dedicated Only|x86.Build.0 = Debug Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release Alpha|x64.ActiveCfg = Release Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release Alpha|x86.ActiveCfg = Release Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release Alpha|x86.Build.0 = Release Alpha|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release|x64.ActiveCfg = Release|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release|x86.ActiveCfg = Release|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Release|x86.Build.0 = Release|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Template|x64.ActiveCfg = Template|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Template|x86.ActiveCfg = Template|Win32
+		{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}.Template|x86.Build.0 = Template|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>+set dedicated 1 +set game rogue +set port 37910 +exec DM.cfg +exec R1Q2_DM.cfg +set logfile_name classic_DM.log</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>+set dedicated 1 +set game rogtrix +set port 37910 +exec DM.cfg +exec R1Q2_DM.cfg +set logfile_name classic_DM.log</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>

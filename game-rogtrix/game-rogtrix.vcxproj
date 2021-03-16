@@ -23,8 +23,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0D541F1C-AA85-440C-A91B-CFA244EE5F20}</ProjectGuid>
-    <ProjectName>UT_Sounds</ProjectName>
+    <ProjectGuid>{78E04B30-7DDA-41F9-BBE9-8A3502E7D0A9}</ProjectGuid>
+    <ProjectName>game-rogtrix</ProjectName>
     <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -81,7 +81,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\build\binaries\release\baseq2\</OutDir>
+    <OutDir>..\build\binaries\release\rogtrix\</OutDir>
     <IntDir>..\build\temp\game</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <TargetName>gamex86.real</TargetName>
@@ -92,7 +92,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\build\binaries\debug\baseq2</OutDir>
+    <OutDir>..\build\binaries\debug\rogtrix\</OutDir>
     <IntDir>..\build\temp\game\debug</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <TargetName>gamex86.real</TargetName>
@@ -300,6 +300,7 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug Alpha|Win32'"> /QA21164 /MTd   /QA21164 /MTd </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release Alpha|Win32'"> /QA21164   /QA21164 </AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="g_newweap.c" />
     <ClCompile Include="g_phys.c">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug Alpha|Win32'"> /QA21164 /MTd   /QA21164 /MTd </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release Alpha|Win32'"> /QA21164   /QA21164 </AdditionalOptions>
