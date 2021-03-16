@@ -430,7 +430,7 @@ void fire_blueblaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 fire_grenade
 =================
 */
-static void Grenade_Explode (edict_t *ent)
+void Grenade_Explode (edict_t *ent)
 {
 	vec3_t		origin;
 	int		mod;

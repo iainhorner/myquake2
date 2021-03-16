@@ -816,11 +816,11 @@ extern	cvar_t	*flood_waitdelay;
 extern	cvar_t	*sv_maplist;
 
 //ROGUE
-extern	cvar_t* g_showlogic;
-extern	cvar_t* gamerules;
-extern	cvar_t* huntercam;
-extern	cvar_t* strong_mines;
-extern	cvar_t* randomrespawn;
+extern	cvar_t	*g_showlogic;
+extern	cvar_t	*gamerules;
+extern	cvar_t	*huntercam;
+extern	cvar_t	*strong_mines;
+extern	cvar_t	*randomrespawn;
 
 #define world	(&g_edicts[0])
 
@@ -964,6 +964,13 @@ char	*vtos (vec3_t v);
 float vectoyaw (vec3_t vec);
 void vectoangles (vec3_t vec, vec3_t angles);
 
+//ROGUE
+void	G_ProjectSource2(vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result);
+float	vectoyaw2(vec3_t vec);
+void	vectoangles2(vec3_t vec, vec3_t angles);
+edict_t *findradius2(edict_t* from, vec3_t org, float rad);
+//ROGUE
+
 //
 // g_combat.c
 //
@@ -971,6 +978,12 @@ qboolean OnSameTeam (edict_t *ent1, edict_t *ent2);
 qboolean CanDamage (edict_t *targ, edict_t *inflictor);
 void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod);
 void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod);
+
+//ROGUE
+void T_RadiusNukeDamage(edict_t* inflictor, edict_t* attacker, float damage, edict_t* ignore, float radius, int mod);
+void T_RadiusClassDamage(edict_t* inflictor, edict_t* attacker, float damage, char* ignoreClass, float radius, int mod);
+void cleanupHealTarget(edict_t* ent);
+//ROGUE
 
 // damage flags
 #define DAMAGE_RADIUS			0x00000001	// damage was indirect
@@ -1171,7 +1184,15 @@ typedef struct
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
-
+	//=========
+	//ROGUE
+	int			max_tesla;
+	int			max_prox;
+	int			max_mines;
+	int			max_flechettes;
+	int			max_rounds;
+	//ROGUE
+	//=========
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -1448,7 +1469,20 @@ struct edict_s
 	float		shell_expire_timestamp;  // %%quadz - when temporary color shell expires (currently relates to traps only)
 
 	int			soundindex;
-
+	//=========
+	//ROGUE
+	int			plat2flags;
+	vec3_t		offset;
+	vec3_t		gravityVector;
+	edict_t* bad_area;
+	edict_t* hint_chain;
+	edict_t* monster_hint_chain;
+	edict_t* target_hint_chain;
+	int			hint_chain_id;
+	// FIXME - debug help!
+	float		lastMoveTime;
+	//ROGUE
+	//=========
 };
 
 // %%quadz - fun with traps:
@@ -1463,3 +1497,15 @@ struct edict_s
 #define trap_is_quadded(ent)		((ent)->dmg >= (TRAP_BASE_DAMAGE * 4))
 #define killable_traps_enabled()	(sv_trap_health->value > 0)
 #define trap_has_become_killable(ent)	((ent)->takedamage == DAMAGE_YES)
+
+//=============
+//ROGUE
+#define ROGUE_GRAVITY	1
+
+#define SPHERE_DEFENDER			0x0001
+#define SPHERE_HUNTER			0x0002
+#define SPHERE_VENGEANCE		0x0004
+#define SPHERE_DOPPLEGANGER		0x0100
+
+#define SPHERE_TYPE				0x00FF
+#define SPHERE_FLAGS			0xFF00

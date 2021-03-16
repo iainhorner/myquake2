@@ -9,7 +9,7 @@
 #define INCLUDE_TESLA			1
 #define INCLUDE_BEAMS			1
 
-extern void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed);
+//extern void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed);
 extern void hurt_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf);
 extern void droptofloor (edict_t *ent);
 extern void Grenade_Explode (edict_t *ent);
@@ -93,8 +93,8 @@ void fire_flechette (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 
 	gi.linkentity (flechette);
 	
-	if (self->client)
-		check_dodge (self, flechette->s.origin, dir, speed);
+	//if (self->client)
+	//	check_dodge (self, flechette->s.origin, dir, speed);
 }
 #endif
 
@@ -1986,8 +1986,8 @@ void fire_blaster2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int spe
 	bolt->classname = "bolt";
  	gi.linkentity (bolt);
 
-	if (self->client)
-		check_dodge (self, bolt->s.origin, dir, speed);
+	//if (self->client)
+	//	check_dodge (self, bolt->s.origin, dir, speed);
 
 	tr = gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
 	if (tr.fraction < 1.0)
@@ -2264,8 +2264,8 @@ void fire_tracker (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 		bolt->think = G_FreeEdict;
 	}
 
-	if (self->client)
-		check_dodge (self, bolt->s.origin, dir, speed);
+	//if (self->client)
+	//	check_dodge (self, bolt->s.origin, dir, speed);
 
 	tr = gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
 	if (tr.fraction < 1.0)

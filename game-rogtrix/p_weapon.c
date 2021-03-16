@@ -9,10 +9,41 @@ static byte		is_silenced;
 // Nick
 static qboolean trapfired = false;
 
+static byte		damage_multiplier;
+
 void weapon_grenade_fire (edict_t *ent, qboolean held);
 // RAFAEL
 void weapon_trap_fire (edict_t *ent, qboolean held);
 
+//========
+//ROGUE
+byte P_DamageModifier(edict_t* ent)
+{
+	is_quad = 0;
+	damage_multiplier = 1;
+
+	if (ent->client->quad_framenum > level.framenum)
+	{
+		damage_multiplier *= 4;
+		is_quad = 1;
+
+		// if we're quad and DF_NO_STACK_DOUBLE is on, return now.
+		if (((int)(dmflags->value) & DF_NO_STACK_DOUBLE))
+			return damage_multiplier;
+	}
+	if (ent->client->double_framenum > level.framenum)
+	{
+		if ((deathmatch->value) || (damage_multiplier == 1))
+		{
+			damage_multiplier *= 2;
+			is_quad = 1;
+		}
+	}
+
+	return damage_multiplier;
+}
+//ROGUE
+//========
 
 static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {

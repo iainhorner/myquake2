@@ -506,6 +506,149 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 	}
 }
 
+// **********************
+// ROGUE
+
+/*
+============
+T_RadiusNukeDamage
+
+Like T_RadiusDamage, but ignores walls (skips CanDamage check, among others)
+// up to KILLZONE radius, do 10,000 points
+// after that, do damage linearly out to KILLZONE2 radius
+============
+*/
+
+void T_RadiusNukeDamage(edict_t* inflictor, edict_t* attacker, float damage, edict_t* ignore, float radius, int mod)
+{
+	float	points;
+	edict_t* ent = NULL;
+	vec3_t	v;
+	vec3_t	dir;
+	float	len;
+	float	killzone, killzone2;
+	trace_t	tr;
+	float	dist;
+
+	killzone = radius;
+	killzone2 = radius * 2.0;
+
+	while ((ent = findradius(ent, inflictor->s.origin, killzone2)) != NULL)
+	{
+		// ignore nobody
+		if (ent == ignore)
+			continue;
+		if (!ent->takedamage)
+			continue;
+		if (!ent->inuse)
+			continue;
+		if (!(ent->client || (ent->svflags & SVF_MONSTER) || (ent->svflags & SVF_DAMAGEABLE)))
+			continue;
+
+		VectorAdd(ent->mins, ent->maxs, v);
+		VectorMA(ent->s.origin, 0.5, v, v);
+		VectorSubtract(inflictor->s.origin, v, v);
+		len = VectorLength(v);
+		if (len <= killzone)
+		{
+			if (ent->client)
+				ent->flags |= FL_NOGIB;
+			points = 10000;
+		}
+		else if (len <= killzone2)
+			points = (damage / killzone) * (killzone2 - len);
+		else
+			points = 0;
+		//		points = damage - 0.005 * len*len;
+		//		if (ent == attacker)
+		//			points = points * 0.5;
+		//		if ((g_showlogic) && (g_showlogic->value))
+		//		{
+		//			if (!(strcmp(ent->classname, "player")))
+		//				gi.dprintf ("dist = %2.2f doing %6.0f damage to %s\n", len, points, inflictor->teammaster->client->pers.netname);
+		//			else
+		//				gi.dprintf ("dist = %2.2f doing %6.0f damage to %s\n", len, points, ent->classname);
+		//		}
+		if (points > 0)
+		{
+			//			if (CanDamage (ent, inflictor))
+			//			{
+			if (ent->client)
+				ent->client->nuke_framenum = level.framenum + 20;
+			VectorSubtract(ent->s.origin, inflictor->s.origin, dir);
+			T_Damage(ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+			//			}
+		}
+	}
+	ent = g_edicts + 1; // skip the worldspawn
+	// cycle through players
+	while (ent)
+	{
+		if ((ent->client) && (ent->client->nuke_framenum != level.framenum + 20) && (ent->inuse))
+		{
+			tr = gi.trace(inflictor->s.origin, NULL, NULL, ent->s.origin, inflictor, MASK_SOLID);
+			if (tr.fraction == 1.0)
+			{
+				//				if ((g_showlogic) && (g_showlogic->value))
+				//					gi.dprintf ("Undamaged player in LOS with nuke, flashing!\n");
+				ent->client->nuke_framenum = level.framenum + 20;
+			}
+			else
+			{
+				dist = realrange(ent, inflictor);
+				if (dist < 2048)
+					ent->client->nuke_framenum = max(ent->client->nuke_framenum, level.framenum + 15);
+				else
+					ent->client->nuke_framenum = max(ent->client->nuke_framenum, level.framenum + 10);
+			}
+			ent++;
+		}
+		else
+			ent = NULL;
+	}
+}
+
+/*
+============
+T_RadiusClassDamage
+
+Like T_RadiusDamage, but ignores anything with classname=ignoreClass
+============
+*/
+void T_RadiusClassDamage(edict_t* inflictor, edict_t* attacker, float damage, char* ignoreClass, float radius, int mod)
+{
+	float	points;
+	edict_t* ent = NULL;
+	vec3_t	v;
+	vec3_t	dir;
+
+	while ((ent = findradius(ent, inflictor->s.origin, radius)) != NULL)
+	{
+		if (ent->classname && !strcmp(ent->classname, ignoreClass))
+			continue;
+		if (!ent->takedamage)
+			continue;
+
+		VectorAdd(ent->mins, ent->maxs, v);
+		VectorMA(ent->s.origin, 0.5, v, v);
+		VectorSubtract(inflictor->s.origin, v, v);
+		points = damage - 0.5 * VectorLength(v);
+		if (ent == attacker)
+			points = points * 0.5;
+		if (points > 0)
+		{
+			if (CanDamage(ent, inflictor))
+			{
+				VectorSubtract(ent->s.origin, inflictor->s.origin, dir);
+				T_Damage(ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+			}
+		}
+	}
+}
+
+// ROGUE
+// ********************
+
 // Nick - this was g_chase.c; moved to here - 03/09/2005
 void UpdateChaseCam(edict_t *ent)
 {

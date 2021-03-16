@@ -63,6 +63,14 @@ cvar_t	*flood_waitdelay;
 
 cvar_t	*sv_maplist;
 
+//ROGUE cvars
+//cvar_t	*g_showlogic;
+//cvar_t	*gamerules;
+//cvar_t	*huntercam;
+cvar_t	*strong_mines;
+//cvar_t	*randomrespawn;
+//ROGUE
+
 // Nick - level countdown stuff
 cvar_t	*countdelay;
 // Nick Respawn invul

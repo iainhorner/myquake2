@@ -64,6 +64,7 @@
     <ClCompile Include="g_newweap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="g_newai.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="g_local.h">
