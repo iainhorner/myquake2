@@ -280,6 +280,22 @@ void NoAmmoWeaponChange (edict_t *ent)
 		ent->client->newweapon = FindItem ("railgun");
 		return;
 	}
+	// ROGUE
+	if ((ent->client->pers.inventory[ITEM_INDEX(FindItem("cells"))] >= 2)
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("Plasma Beam"))])
+	{
+		ent->client->newweapon = FindItem("Plasma Beam");
+		return;
+	}
+	// -ROGUE
+		// ROGUE
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("flechettes"))]
+		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("etf rifle"))])
+	{
+		ent->client->newweapon = FindItem("etf rifle");
+		return;
+	}
+	// -ROGUE
 	// RAFAEL
 	if ( ent->client->pers.inventory[ITEM_INDEX (FindItem ("mag slug"))]
 		&& ent->client->pers.inventory[ITEM_INDEX (FindItem ("phalanx"))])

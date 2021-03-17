@@ -308,7 +308,12 @@ typedef enum
 	AMMO_SLUGS,
 	// RAFAEL
 	AMMO_MAGSLUG,
-	AMMO_TRAP
+	AMMO_TRAP,
+	//ROGUE
+	AMMO_FLECHETTES,
+	AMMO_TESLA,
+	AMMO_PROX,
+	AMMO_DISRUPTOR
 } ammo_t;
 
 
@@ -427,6 +432,10 @@ typedef struct
 #define IT_KEY			16
 #define IT_POWERUP		32
 
+// ROGUE
+#define IT_MELEE			0x00000040
+#define IT_NOT_GIVEABLE		0x00000080	// item can not be given
+
 // gitem_t->weapmodel for weapons indicates model index
 // Nick - Added trap - was missing from original
 #define WEAP_BLASTER			1 
@@ -443,6 +452,11 @@ typedef struct
 #define WEAP_PHALANX			12
 #define WEAP_BOOMER				13
 #define WEAP_TRAP				14
+#define WEAP_DISRUPTOR			15		// PGM
+#define WEAP_ETFRIFLE			16		// PGM
+#define WEAP_PLASMA				17		// PGM
+#define WEAP_PROXLAUNCH			18		// PGM
+#define WEAP_CHAINFIST			19		// PGM
 
 
 typedef struct gitem_s
