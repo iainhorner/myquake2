@@ -64,7 +64,15 @@
     <ClCompile Include="g_newweap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="g_newai.c" />
+    <ClCompile Include="g_newai.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_newdm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_sphere.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="g_local.h">
@@ -76,6 +84,7 @@
     <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="m_player.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="game.def" />

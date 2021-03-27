@@ -214,6 +214,13 @@ void InitGame (void)
 	if (deathmatch->value != 1) 
 		gi.cvar_forceset("deathmatch", "1");
 
+	//ROGUE
+	g_showlogic = gi.cvar("g_showlogic", "0", 0);
+	huntercam = gi.cvar("huntercam", "1", CVAR_SERVERINFO | CVAR_LATCH);
+	strong_mines = gi.cvar("strong_mines", "0", 0);
+	randomrespawn = gi.cvar("randomrespawn", "0", 0);
+	//ROGUE
+
 	//maplist
 	GetMapList();
 

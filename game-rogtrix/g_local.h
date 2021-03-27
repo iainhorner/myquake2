@@ -647,7 +647,7 @@ typedef struct
 	void		(*endfunc)(edict_t *self);
 } mmove_t;
 
-/* Nick - remove all this
+
 typedef struct
 {
 	mmove_t		*currentmove;
@@ -680,8 +680,40 @@ typedef struct
 
 	int			power_armor_type;
 	int			power_armor_power;
+	//ROGUE
+	qboolean(*blocked)(edict_t* self, float dist);
+	//	edict_t		*last_hint;			// last hint_path the monster touched
+	float		last_hint_time;		// last time the monster checked for hintpaths.
+	edict_t* goal_hint;			// which hint_path we're trying to get to
+	int			medicTries;
+	edict_t* badMedic1, * badMedic2;	// these medics have declared this monster "unhealable"
+	edict_t* healer;	// this is who is healing this monster
+	void		(*duck)(edict_t* self, float eta);
+	void		(*unduck)(edict_t* self);
+	void		(*sidestep)(edict_t* self);
+	//  while abort_duck would be nice, only monsters which duck but don't sidestep would use it .. only the brain
+	//  not really worth it.  sidestep is an implied abort_duck
+//	void		(*abort_duck)(edict_t *self);
+	float		base_height;
+	float		next_duck_time;
+	float		duck_wait_time;
+	edict_t* last_player_enemy;
+	// blindfire stuff .. the boolean says whether the monster will do it, and blind_fire_time is the timing
+	// (set in the monster) of the next shot
+	qboolean	blindfire;		// will the monster blindfire?
+	float		blind_fire_delay;
+	vec3_t		blind_fire_target;
+	// used by the spawners to not spawn too much and keep track of #s of monsters spawned
+	int			monster_slots;
+	int			monster_used;
+	edict_t* commander;
+	// powerup timers, used by widow, our friend
+	float		quad_framenum;
+	float		invincible_framenum;
+	float		double_framenum;
+	//ROGUE
 } monsterinfo_t;
-end Nick */
+
 
 
 extern	game_locals_t	game;
@@ -1141,6 +1173,24 @@ void fire_heat(edict_t* self, vec3_t start, vec3_t aimdir, vec3_t offset, int da
 void fire_tracker(edict_t* self, vec3_t start, vec3_t dir, int damage, int speed, edict_t* enemy);
 
 //
+// g_sphere.c
+//
+void Defender_Launch(edict_t* self);
+void Vengeance_Launch(edict_t* self);
+void Hunter_Launch(edict_t* self);
+
+//
+// g_newdm.c
+//
+void InitGameRules(void);
+edict_t* DoRandomRespawn(edict_t* ent);
+void PrecacheForRandomRespawn(void);
+qboolean Tag_PickupToken(edict_t* ent, edict_t* other);
+void Tag_DropToken(edict_t* ent, gitem_t* item);
+void Tag_PlayerDeath(edict_t* targ, edict_t* inflictor, edict_t* attacker);
+void fire_doppleganger(edict_t* ent, vec3_t start, vec3_t aimdir);
+
+//
 // Nick - g_misc.c (moved from g_ai.c
 //
 qboolean visible (edict_t *self, edict_t *other);
@@ -1485,6 +1535,7 @@ struct edict_s
 	int			soundindex;
 	//=========
 	//ROGUE
+	monsterinfo_t	monsterinfo;
 	int			plat2flags;
 	vec3_t		offset;
 	vec3_t		gravityVector;
@@ -1523,3 +1574,52 @@ struct edict_s
 
 #define SPHERE_TYPE				0x00FF
 #define SPHERE_FLAGS			0xFF00
+//
+// deathmatch games
+//
+#define		RDM_TAG			2
+#define		RDM_DEATHBALL	3
+
+typedef struct dm_game_rs
+{
+	void		(*GameInit)(void);
+	void		(*PostInitSetup)(void);
+	void		(*ClientBegin) (edict_t* ent);
+	void		(*SelectSpawnPoint) (edict_t* ent, vec3_t origin, vec3_t angles);
+	void		(*PlayerDeath)(edict_t* targ, edict_t* inflictor, edict_t* attacker);
+	void		(*Score)(edict_t* attacker, edict_t* victim, int scoreChange);
+	void		(*PlayerEffects)(edict_t* ent);
+	void		(*DogTag)(edict_t* ent, edict_t* killer, char** pic);
+	void		(*PlayerDisconnect)(edict_t* ent);
+	int			(*ChangeDamage)(edict_t* targ, edict_t* attacker, int damage, int mod);
+	int			(*ChangeKnockback)(edict_t* targ, edict_t* attacker, int knockback, int mod);
+	int			(*CheckDMRules)(void);
+} dm_game_rt;
+
+extern dm_game_rt	DMGame;
+
+void Tag_GameInit(void);
+void Tag_PostInitSetup(void);
+void Tag_PlayerDeath(edict_t* targ, edict_t* inflictor, edict_t* attacker);
+void Tag_Score(edict_t* attacker, edict_t* victim, int scoreChange);
+void Tag_PlayerEffects(edict_t* ent);
+void Tag_DogTag(edict_t* ent, edict_t* killer, char** pic);
+void Tag_PlayerDisconnect(edict_t* ent);
+int  Tag_ChangeDamage(edict_t* targ, edict_t* attacker, int damage, int mod);
+
+void DBall_GameInit(void);
+void DBall_ClientBegin(edict_t* ent);
+void DBall_SelectSpawnPoint(edict_t* ent, vec3_t origin, vec3_t angles);
+int  DBall_ChangeKnockback(edict_t* targ, edict_t* attacker, int knockback, int mod);
+int  DBall_ChangeDamage(edict_t* targ, edict_t* attacker, int damage, int mod);
+void DBall_PostInitSetup(void);
+int  DBall_CheckDMRules(void);
+//void Tag_PlayerDeath (edict_t *targ, edict_t *inflictor, edict_t *attacker);
+//void Tag_Score (edict_t *attacker, edict_t *victim, int scoreChange);
+//void Tag_PlayerEffects (edict_t *ent);
+//void Tag_DogTag (edict_t *ent, edict_t *killer, char **pic);
+//void Tag_PlayerDisconnect (edict_t *ent);
+//int  Tag_ChangeDamage (edict_t *targ, edict_t *attacker, int damage);
+
+//ROGUE
+//============
