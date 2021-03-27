@@ -559,8 +559,8 @@ void hunter_think (edict_t *self)
 		vectoangles2(dir, ang);
 		self->ideal_yaw = ang[YAW];
 	}
-
-	M_ChangeYaw(self);
+	//HACK: commented out, think is to do with monsters anyway
+	//M_ChangeYaw(self);
 
 //	if(level.time - self->timestamp > 1)
 //	{

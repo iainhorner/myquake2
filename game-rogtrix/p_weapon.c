@@ -45,18 +45,32 @@ byte P_DamageModifier(edict_t* ent)
 //ROGUE
 //========
 
-static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
+static void P_ProjectSource(gclient_t* client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	vec3_t	_distance;
 
-	VectorCopy (distance, _distance);
+	VectorCopy(distance, _distance);
 	if (client->pers.hand == LEFT_HANDED)
 		_distance[1] *= -1;
 	else if (client->pers.hand == CENTER_HANDED)
 		_distance[1] = 0;
-	G_ProjectSource (point, _distance, forward, right, result);
+	G_ProjectSource(point, _distance, forward, right, result);
 }
 
+static void P_ProjectSource2(gclient_t* client, vec3_t point, vec3_t distance, vec3_t forward,
+	vec3_t right, vec3_t up, vec3_t result)
+{
+	vec3_t	_distance;
+
+	VectorCopy(distance, _distance);
+	if (client->pers.hand == LEFT_HANDED)
+		_distance[1] *= -1;
+	else if (client->pers.hand == CENTER_HANDED)
+		_distance[1] = 0;
+	G_ProjectSource2(point, _distance, forward, right, up, result);
+}
+
+/*
 
 /*
 ===============
@@ -734,6 +748,136 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 		ent->client->anim_priority = ANIM_REVERSE;
 		ent->s.frame = FRAME_wave08;
 		ent->client->anim_end = FRAME_wave01;
+	}
+}
+
+#define FRAME_IDLE_FIRST		(FRAME_FIRE_LAST + 1)
+
+//void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent))
+//									15                      48						5						11					12				29,34,39,48
+void Throw_Generic(edict_t* ent, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_THROW_SOUND,
+	int FRAME_THROW_HOLD, int FRAME_THROW_FIRE, int* pause_frames, int EXPLODE,
+	void (*fire)(edict_t* ent, qboolean held))
+{
+	int n;
+
+	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
+	{
+		ChangeWeapon(ent);
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_ACTIVATING)
+	{
+		ent->client->weaponstate = WEAPON_READY;
+		ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_READY)
+	{
+		if (((ent->client->latched_buttons | ent->client->buttons) & BUTTON_ATTACK))
+		{
+			ent->client->latched_buttons &= ~BUTTON_ATTACK;
+			if (ent->client->pers.inventory[ent->client->ammo_index])
+			{
+				ent->client->ps.gunframe = 1;
+				ent->client->weaponstate = WEAPON_FIRING;
+				ent->client->grenade_time = 0;
+			}
+			else
+			{
+				if (level.time >= ent->pain_debounce_time)
+				{
+					gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					ent->pain_debounce_time = level.time + 1;
+				}
+				NoAmmoWeaponChange(ent);
+			}
+			return;
+		}
+
+		if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
+		{
+			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+			return;
+		}
+
+		if (pause_frames)
+		{
+			for (n = 0; pause_frames[n]; n++)
+			{
+				if (ent->client->ps.gunframe == pause_frames[n])
+				{
+					if (rand() & 15)
+						return;
+				}
+			}
+		}
+
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_FIRING)
+	{
+		if (ent->client->ps.gunframe == FRAME_THROW_SOUND)
+			gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/hgrena1b.wav"), 1, ATTN_NORM, 0);
+
+		if (ent->client->ps.gunframe == FRAME_THROW_HOLD)
+		{
+			if (!ent->client->grenade_time)
+			{
+				ent->client->grenade_time = level.time + GRENADE_TIMER + 0.2;
+				switch (ent->client->pers.weapon->tag)
+				{
+				case AMMO_GRENADES:
+					ent->client->weapon_sound = gi.soundindex("weapons/hgrenc1b.wav");
+					break;
+				}
+			}
+
+			// they waited too long, detonate it in their hand
+			if (EXPLODE && !ent->client->grenade_blew_up && level.time >= ent->client->grenade_time)
+			{
+				ent->client->weapon_sound = 0;
+				fire(ent, true);
+				ent->client->grenade_blew_up = true;
+			}
+
+			if (ent->client->buttons & BUTTON_ATTACK)
+				return;
+
+			if (ent->client->grenade_blew_up)
+			{
+				if (level.time >= ent->client->grenade_time)
+				{
+					ent->client->ps.gunframe = FRAME_FIRE_LAST;
+					ent->client->grenade_blew_up = false;
+				}
+				else
+				{
+					return;
+				}
+			}
+		}
+
+		if (ent->client->ps.gunframe == FRAME_THROW_FIRE)
+		{
+			ent->client->weapon_sound = 0;
+			fire(ent, true);
+		}
+
+		if ((ent->client->ps.gunframe == FRAME_FIRE_LAST) && (level.time < ent->client->grenade_time))
+			return;
+
+		ent->client->ps.gunframe++;
+
+		if (ent->client->ps.gunframe == FRAME_IDLE_FIRST)
+		{
+			ent->client->grenade_time = 0;
+			ent->client->weaponstate = WEAPON_READY;
+		}
 	}
 }
 

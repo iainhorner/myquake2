@@ -1182,7 +1182,7 @@ void Hunter_Launch(edict_t* self);
 //
 // g_newdm.c
 //
-void InitGameRules(void);
+//void InitGameRules(void);
 edict_t* DoRandomRespawn(edict_t* ent);
 void PrecacheForRandomRespawn(void);
 qboolean Tag_PickupToken(edict_t* ent, edict_t* other);

@@ -11,50 +11,50 @@ dm_game_rt	DMGame;
 // General DM Stuff
 // ****************************
 
-void InitGameRules(void)
-{
-	int		gameNum;
-
-	// clear out the game rule structure before we start
-	memset(&DMGame, 0, sizeof(dm_game_rt));
-
-	if(gamerules && gamerules->value)
-	{
-		gameNum = gamerules->value;
-		switch(gameNum)
-		{
-			case RDM_TAG:
-				DMGame.GameInit = Tag_GameInit;
-				DMGame.PostInitSetup = Tag_PostInitSetup;
-				DMGame.PlayerDeath = Tag_PlayerDeath;
-				DMGame.Score = Tag_Score;
-				DMGame.PlayerEffects = Tag_PlayerEffects;
-				DMGame.DogTag = Tag_DogTag;
-				DMGame.PlayerDisconnect = Tag_PlayerDisconnect;
-				DMGame.ChangeDamage = Tag_ChangeDamage;
-				break;
-/*
-			case RDM_DEATHBALL:
-				DMGame.GameInit = DBall_GameInit;
-				DMGame.ChangeKnockback = DBall_ChangeKnockback;
-				DMGame.ChangeDamage = DBall_ChangeDamage;
-				DMGame.ClientBegin = DBall_ClientBegin;
-				DMGame.SelectSpawnPoint = DBall_SelectSpawnPoint;
-				DMGame.PostInitSetup = DBall_PostInitSetup;
-				DMGame.CheckDMRules = DBall_CheckDMRules;
-				break;
-*/
-			// reset gamerules if it's not a valid number
-			default:
-				gamerules->value = 0;
-				break;
-		}
-	}
-
-	// if we're set up to play, initialize the game as needed.
-	if(DMGame.GameInit)
-		DMGame.GameInit();
-}
+//void InitGameRules(void)
+//{
+//	int		gameNum;
+//
+//	// clear out the game rule structure before we start
+//	memset(&DMGame, 0, sizeof(dm_game_rt));
+//
+//	if(gamerules && gamerules->value)
+//	{
+//		gameNum = gamerules->value;
+//		switch(gameNum)
+//		{
+//			case RDM_TAG:
+//				DMGame.GameInit = Tag_GameInit;
+//				DMGame.PostInitSetup = Tag_PostInitSetup;
+//				DMGame.PlayerDeath = Tag_PlayerDeath;
+//				DMGame.Score = Tag_Score;
+//				DMGame.PlayerEffects = Tag_PlayerEffects;
+//				DMGame.DogTag = Tag_DogTag;
+//				DMGame.PlayerDisconnect = Tag_PlayerDisconnect;
+//				DMGame.ChangeDamage = Tag_ChangeDamage;
+//				break;
+///*
+//			case RDM_DEATHBALL:
+//				DMGame.GameInit = DBall_GameInit;
+//				DMGame.ChangeKnockback = DBall_ChangeKnockback;
+//				DMGame.ChangeDamage = DBall_ChangeDamage;
+//				DMGame.ClientBegin = DBall_ClientBegin;
+//				DMGame.SelectSpawnPoint = DBall_SelectSpawnPoint;
+//				DMGame.PostInitSetup = DBall_PostInitSetup;
+//				DMGame.CheckDMRules = DBall_CheckDMRules;
+//				break;
+//*/
+//			// reset gamerules if it's not a valid number
+//			default:
+//				gamerules->value = 0;
+//				break;
+//		}
+//	}
+//
+//	// if we're set up to play, initialize the game as needed.
+//	if(DMGame.GameInit)
+//		DMGame.GameInit();
+//}
 
 //=================
 //=================
@@ -314,8 +314,9 @@ void body_think (edict_t *self)
 			}
 		}
 	}
-	else
-		M_ChangeYaw(self);
+	//HACK: commented out, think is to do with monsters anyway
+	//else
+	//	M_ChangeYaw(self);
 
 	self->s.frame ++;
 	if (self->s.frame > FRAME_stand40)

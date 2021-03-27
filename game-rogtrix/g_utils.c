@@ -9,7 +9,12 @@ void G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t righ
 	result[1] = point[1] + forward[1] * distance[0] + right[1] * distance[1];
 	result[2] = point[2] + forward[2] * distance[0] + right[2] * distance[1] + distance[2];
 }
-
+void G_ProjectSource2(vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result)
+{
+	result[0] = point[0] + forward[0] * distance[0] + right[0] * distance[1] + up[0] * distance[2];
+	result[1] = point[1] + forward[1] * distance[0] + right[1] * distance[1] + up[1] * distance[2];
+	result[2] = point[2] + forward[2] * distance[0] + right[2] * distance[1] + up[2] * distance[2];
+}
 
 /*
 =============
