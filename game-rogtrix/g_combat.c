@@ -293,6 +293,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			asave;
 	int			psave;
 	int			te_sparks;
+	int			sphere_notified;	// PGM
 
 	if (!targ->takedamage)
 		return;
@@ -313,19 +314,29 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		}
 	}
 	meansOfDeath = mod;
-	// End Nick do not remove.
-	
-	// easy mode takes half damage
-	// Nick - remove this for a DED server
-	//if (skill->value == 0 && deathmatch->value == 0 && targ->client)
-	//{
-	//	damage *= 0.5;
-	//	if (!damage)
-	//		damage = 1;
-	//}
-	// End Nick
+	//ROGUE
+		// allow the deathmatch game to change values
+	if (deathmatch->value && gamerules && gamerules->value)
+	{
+		if (DMGame.ChangeDamage)
+			damage = DMGame.ChangeDamage(targ, attacker, damage, mod);
+		if (DMGame.ChangeKnockback)
+			knockback = DMGame.ChangeKnockback(targ, attacker, knockback, mod);
+
+		if (!damage)
+			return;
+	}
+	//ROGUE
 
 	client = targ->client;
+
+	// PMM - defender sphere takes half damage
+	if ((client) && (client->owned_sphere) && (client->owned_sphere->spawnflags == 1))
+	{
+		damage *= 0.5;
+		if (!damage)
+			damage = 1;
+	}
 
 	if (dflags & DAMAGE_BULLET)
 		te_sparks = TE_BULLET_SPARKS;
@@ -397,13 +408,47 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	//treat cheat/powerup savings the same as armor
 	asave += save;
 
-	// team damage avoidance
-	//if (!(dflags & DAMAGE_NO_PROTECTION) && CheckTeamDamage (targ, attacker))
-	//	return;
+	// ROGUE - this option will do damage both to the armor and person. originally for DPU rounds
+	if (dflags & DAMAGE_DESTROY_ARMOR)
+	{
+		if (!(targ->flags & FL_GODMODE) && !(dflags & DAMAGE_NO_PROTECTION) &&
+			!(client && client->invincible_framenum > level.framenum))
+		{
+			take = damage;
+		}
+	}
+	// ROGUE
 
 // do the damage
 	if (take)
 	{
+		//PGM		need more blood for chainfist.
+		if (targ->flags & FL_MECHANICAL)
+		{
+			SpawnDamage(TE_ELECTRIC_SPARKS, point, normal, take);
+		}
+		else if ((targ->svflags & SVF_MONSTER) || (client))
+		{
+			if (mod == MOD_CHAINFIST)
+				SpawnDamage(TE_MOREBLOOD, point, normal, 255);
+			else
+				SpawnDamage(TE_BLOOD, point, normal, take);
+		}
+		else
+			SpawnDamage(te_sparks, point, normal, take);
+		//PGM
+
+		targ->health = targ->health - take;
+
+		//PGM - spheres need to know who to shoot at
+		if (client && client->owned_sphere)
+		{
+			sphere_notified = true;
+			if (client->owned_sphere->pain)
+				client->owned_sphere->pain(client->owned_sphere, attacker, 0, 0);
+		}
+		//PGM
+
 		// Nick
 		//if ((targ->svflags & SVF_MONSTER) || (client))
 		//	if (strcmp (targ->classname, "monster_gekk") == 0)
@@ -429,21 +474,17 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		}
 	}
 
-
-	/* Nick remove for DED server
-	if (targ->svflags & SVF_MONSTER)
+	//PGM - spheres need to know who to shoot at
+	if (!sphere_notified)
 	{
-		M_ReactToDamage (targ, attacker);
-		if (!(targ->monsterinfo.aiflags & AI_DUCKED) && (take))
+		if (client && client->owned_sphere)
 		{
-			targ->pain (targ, attacker, knockback, take);
-			// nightmare mode monsters don't go into pain frames often
-			if (skill->value == 3)
-				targ->pain_debounce_time = level.time + 5;
+			sphere_notified = true;
+			if (client->owned_sphere->pain)
+				client->owned_sphere->pain(client->owned_sphere, attacker, 0, 0);
 		}
 	}
-	else
-	End Nick */
+	//PGM
  
 	if (client)
 	{
