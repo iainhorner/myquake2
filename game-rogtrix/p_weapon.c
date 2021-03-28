@@ -1151,6 +1151,8 @@ void Weapon_ProxLauncher(edict_t* ent)
 	static int      fire_frames[] = { 6, 0 };
 
 	Weapon_Generic(ent, 5, 16, 59, 64, pause_frames, fire_frames, weapon_grenadelauncher_fire);
+	if (is_quadfire && (Q_strcmpz(ent->client->pers.weapon->pickup_name, "Prox Launcher") == 0))
+		Weapon_Generic(ent, 5, 16, 59, 64, pause_frames, fire_frames, weapon_grenadelauncher_fire);
 }
 //ROGUE
 //==========
@@ -2475,6 +2477,8 @@ void Weapon_Disintegrator(edict_t* ent)
 	static int	fire_frames[] = { 5, 0 };
 
 	Weapon_Generic(ent, 4, 9, 29, 34, pause_frames, fire_frames, weapon_tracker_fire);
+	if (is_quadfire)
+		Weapon_Generic(ent, 4, 9, 29, 34, pause_frames, fire_frames, weapon_tracker_fire);
 }
 
 /*
@@ -2583,10 +2587,8 @@ void Weapon_ETF_Rifle(edict_t* ent)
 	static int	fire_frames[] = { 6, 7, 0 };
 	//	static int	idle_seq;
 
-		// note - if you change the fire frame number, fix the offset in weapon_etf_rifle_fire.
+	// note - if you change the fire frame number, fix the offset in weapon_etf_rifle_fire.
 
-	//	if (!(ent->client->buttons & BUTTON_ATTACK))
-	//		ent->client->machinegun_shots = 0;
 
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
@@ -2596,10 +2598,12 @@ void Weapon_ETF_Rifle(edict_t* ent)
 
 	Weapon_Generic(ent, 4, 7, 37, 41, pause_frames, fire_frames, weapon_etf_rifle_fire);
 
+	if (is_quadfire)
+		Weapon_Generic(ent, 4, 7, 37, 41, pause_frames, fire_frames, weapon_etf_rifle_fire);
+
 	if (ent->client->ps.gunframe == 8 && (ent->client->buttons & BUTTON_ATTACK))
 		ent->client->ps.gunframe = 6;
 
-	//	gi.dprintf("etf rifle %d\n", ent->client->ps.gunframe);
 }
 
 // pgm - this now uses ent->client->pers.weapon->quantity like all the other weapons
@@ -2744,8 +2748,10 @@ void Weapon_Heatbeam(edict_t* ent)
 		ent->client->ps.gunindex = gi.modelindex("models/weapons/v_beamer/tris.md2");
 		ent->client->weapon_sound = 0;
 	}
-
-	//	Weapon_Generic (ent, 8, 9, 39, 44, pause_frames, fire_frames, Heatbeam_Fire);
 	Weapon_Generic(ent, 8, 12, 39, 44, pause_frames, fire_frames, Heatbeam_Fire);
+
+	if (is_quadfire)
+		Weapon_Generic(ent, 8, 12, 39, 44, pause_frames, fire_frames, Heatbeam_Fire);
+
 }
 
