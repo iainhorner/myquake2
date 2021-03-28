@@ -772,13 +772,7 @@ extern	int	snd_fry;
 #define MOD_BLASTOFF			37
 #define MOD_GEKK				38
 #define MOD_TRAP				39
-// Nick - 2005
-#define MOD_RIPPERSELF          40 // Ripper suicide
-#define MOD_P_SPLASH            41 // Phalanx proximity kill
-#define MOD_HELD_TRAP		42
-#define MOD_TRAP_SPLASH		43
-#define MOD_TRAP_EXPLODE	44
-// END 14-APR-98
+
 #define MOD_FRIENDLY_FIRE	0x8000000
 
 //========
@@ -801,6 +795,14 @@ extern	int	snd_fry;
 #define MOD_DOPPLE_HUNTER		55
 //ROGUE
 //========
+
+// Nick - 2005
+#define MOD_RIPPERSELF          56 // Ripper suicide
+#define MOD_P_SPLASH            57 // Phalanx proximity kill
+#define MOD_HELD_TRAP		58
+#define MOD_TRAP_SPLASH		59
+#define MOD_TRAP_EXPLODE	60
+// END 14-APR-98
 
 extern	int	meansOfDeath;
 
