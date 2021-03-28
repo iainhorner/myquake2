@@ -385,6 +385,8 @@ void Think_Weapon (edict_t *ent)
 		is_quad = (ent->client->quad_framenum > level.framenum);
 		// RAFAEL
 		is_quadfire = (ent->client->quadfire_framenum > level.framenum);
+		//ROGUE 
+		P_DamageModifier(ent);
 		if (ent->client->silencer_shots)
 			is_silenced = MZ_SILENCED;
 		else
