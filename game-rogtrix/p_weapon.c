@@ -710,29 +710,64 @@ GRENADE
 void weapon_grenade_fire (edict_t *ent, qboolean held)
 {
 	vec3_t	offset;
-	vec3_t	forward, right;
+	vec3_t	forward, right, up;
 	vec3_t	start;
 	int		damage = 125;
 	float	timer;
 	int		speed;
 	float	radius;
 
-	radius = damage+40;
+	radius = damage + 40;
 	if (is_quad)
-		damage *= 4;
+		//		damage *= 4;
+		damage *= damage_multiplier;		// PGM
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	AngleVectors(ent->client->v_angle, forward, right, up);
+	if (ent->client->pers.weapon->tag == AMMO_TESLA)
+	{
+		//		VectorSet(offset, 0, -12, ent->viewheight-26);
+		VectorSet(offset, 0, -4, ent->viewheight - 22);
+	}
+	else
+	{
+		//		VectorSet(offset, 8, 8, ent->viewheight-8);
+		VectorSet(offset, 2, 6, ent->viewheight - 14);
+	}
+	P_ProjectSource2(ent->client, ent->s.origin, offset, forward, right, up, start);
 
 	timer = ent->client->grenade_time - level.time;
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
+	if (speed > GRENADE_MAXSPEED)
+		speed = GRENADE_MAXSPEED;
 
-	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+	//	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
+
+	// ============
+	// PGM
+	switch (ent->client->pers.weapon->tag)
+	{
+	case AMMO_GRENADES:
+		fire_grenade2(ent, start, forward, damage, speed, timer, radius, held);
+		break;
+	case AMMO_TESLA:
+		fire_tesla(ent, start, forward, damage_multiplier, speed);
+		break;
+	default:
+		fire_prox(ent, start, forward, damage_multiplier, speed);
+		break;
+	}
+	// PGM
+	// ============
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 
 	ent->client->grenade_time = level.time + 1.0;
+
+	if (ent->deadflag || ent->s.modelindex != 255) // VWep animations screw up corpses
+	{
+		return;
+	}
 
 	if (ent->health <= 0)
 		return;
@@ -740,7 +775,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
 	{
 		ent->client->anim_priority = ANIM_ATTACK;
-		ent->s.frame = FRAME_crattak1-1;
+		ent->s.frame = FRAME_crattak1 - 1;
 		ent->client->anim_end = FRAME_crattak3;
 	}
 	else
@@ -1034,32 +1069,61 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
-	int		damage = 120;
+	//	int		damage = 120;
+	int		damage;			// PGM
 	float	radius;
 
-	radius = damage+40;
+	// =====
+	// PGM
+	switch (ent->client->pers.weapon->tag)
+	{
+	case AMMO_PROX:
+		damage = 90;
+		break;
+	default:
+		damage = 120;
+		break;
+	}
+	// PGM
+	// =====
+
+	radius = damage + 40;
 	if (is_quad)
-		damage *= 4;
+		//		damage *= 4;
+		damage *= damage_multiplier;		//pgm
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 
-	VectorScale (forward, -2, ent->client->kick_origin);
+	VectorScale(forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	//	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	// =====
+	// PGM
+	switch (ent->client->pers.weapon->tag)
+	{
+	case AMMO_PROX:
+		fire_prox(ent, start, forward, damage_multiplier, 600);
+		break;
+	default:
+		fire_grenade(ent, start, forward, damage, 600, 2.5, radius);
+		break;
+	}
+	// PGM
+	// =====
 
-	gi.WriteByte (svc_muzzleflash);
-	gi.WriteShort (ent-g_edicts);
-	gi.WriteByte (MZ_GRENADE | is_silenced);
-	gi.multicast (ent->s.origin, MULTICAST_PVS);
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_GRENADE | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
 
