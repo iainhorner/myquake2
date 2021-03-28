@@ -1454,7 +1454,6 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		}
 		if ( (int)dmflags->value & DF_INFINITE_AMMO )
 		{
-			//if ( (item->flags == IT_AMMO) || (strcmp(ent->classname, "weapon_bfg") == 0) )
 			if ( (item->flags == IT_AMMO) || (Q_strcmpz(ent->classname, "weapon_bfg") == 0) )
 			{
 				G_FreeEdict (ent);
@@ -1488,20 +1487,6 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 				return;
 			}
 		}
-
-		if (item->pickup == Pickup_Doppleganger || item->pickup == Pickup_Nuke)
-		{
-			G_FreeEdict(ent);
-			return;
-		}
-		if ((item->use == Use_Vengeance) || (item->use == Use_Hunter))
-		{
-			G_FreeEdict(ent);
-			return;
-		}
-
-		//ROGUE
-		//==========
 
 
 	ent->item = item;

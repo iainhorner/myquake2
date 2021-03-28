@@ -175,20 +175,7 @@ spawn_t	spawns[] = {
 	{"misc_gib_head", SP_misc_gib_head},
 	{"misc_teleporter", SP_misc_teleporter},
 	{"misc_teleporter_dest", SP_misc_teleporter_dest},
-	//{"misc_blackhole", SP_misc_blackhole},
-	// RAFAEL
 	{"misc_amb4", SP_misc_amb4},
-	// RAFAEL 17-APR-98
-	// END 17-APR-98
-	// RAFAEL 12-MAY-98
-	//{"misc_nuke", SP_misc_nuke},
-	
-	// RAFAEL 14-APR-98
-	
-	//{"turret_breach", SP_turret_breach},
-	//{"turret_base", SP_turret_base},
-	//{"turret_driver", SP_turret_driver},
-
 	{NULL, NULL}
 };
 
@@ -210,6 +197,22 @@ void ED_CallSpawn (edict_t *ent)
 		gi.dprintf ("ED_CallSpawn: NULL classname\n");
 		return;
 	}
+
+	//ROGUE - do this before calling the spawn function so it can be overridden.
+	#ifdef ROGUE_GRAVITY
+		ent->gravityVector[0] = 0.0;
+		ent->gravityVector[1] = 0.0;
+		ent->gravityVector[2] = -1.0;
+	#endif
+
+	if (!Q_strcmpz(ent->classname, "weapon_nailgun"))
+		ent->classname = (FindItem("ETF Rifle"))->classname;
+	if (!Q_strcmpz(ent->classname, "ammo_nails"))
+		ent->classname = (FindItem("Flechettes"))->classname;
+	if (!Q_strcmpz(ent->classname, "weapon_heatbeam"))
+		ent->classname = (FindItem("Plasma Beam"))->classname;
+	// pmm
+
 
 	// check item spawn functions
 	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
