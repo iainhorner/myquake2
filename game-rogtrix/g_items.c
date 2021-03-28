@@ -1516,7 +1516,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 //======================================================================
 
 //gitem_t	itemlist[] = 
-gitem_t    itemlist[50] =
+gitem_t    itemlist[55] =
 {
 	{
 		NULL
@@ -2519,6 +2519,127 @@ gives +1 to maximum health
 		0,
 /* precache */ "items/s_health.wav items/n_health.wav items/l_health.wav items/m_health.wav"
 	}, //No.33
+// ======================================
+// ROGUE
+	/*QUAKED item_double (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
+	*/
+	{
+		"item_double",
+		Pickup_Powerup,
+		Use_Double,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/ddamage/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"p_double",
+		/* pickup */	"Double Damage",
+		/* width */		2,
+				60,
+				NULL,
+				IT_POWERUP,
+				0,
+				NULL,
+				0,
+				/* precache */ "misc/ddamage1.wav misc/ddamage2.wav misc/ddamage3.wav"
+	},
+
+
+	/*QUAKED item_sphere_vengeance (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
+	*/
+	{
+		"item_sphere_vengeance",
+		Pickup_Sphere,
+		Use_Vengeance,
+		NULL,
+		NULL,
+		"items/pkup.wav",
+		"models/items/vengnce/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"p_vengeance",
+		/* pickup */	"vengeance sphere",
+		/* width */		2,
+				60,
+				NULL,
+				IT_POWERUP,
+				0,
+				NULL,
+				0,
+				"spheres/v_idle.wav"		//precache
+	},
+
+	/*QUAKED item_sphere_hunter (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
+	*/
+	{
+		"item_sphere_hunter",
+		Pickup_Sphere,
+		Use_Hunter,
+		NULL,
+		NULL,
+		"items/pkup.wav",
+		"models/items/hunter/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"p_hunter",
+		/* pickup */	"hunter sphere",
+		/* width */		2,
+				120,
+				NULL,
+				IT_POWERUP,
+				0,
+				NULL,
+				0,
+				"spheres/h_idle.wav spheres/h_active.wav spheres/h_lurk.wav"		//precache
+	},
+
+	/*QUAKED item_sphere_defender (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
+	*/
+	{
+		"item_sphere_defender",
+		Pickup_Sphere,
+		Use_Defender,
+		NULL,
+		NULL,
+		"items/pkup.wav",
+		"models/items/defender/tris.md2", EF_ROTATE,
+		NULL,
+		/* icon */		"p_defender",
+		/* pickup */	"defender sphere",
+		/* width */		2,
+				60,													// respawn time
+				NULL,												// ammo type used
+				IT_POWERUP,											// inventory flags
+				0,
+				NULL,												// info (void *)
+				0,													// tag
+				"models/proj/laser2/tris.md2 models/items/shell/tris.md2 spheres/d_idle.wav"		// precache
+	},
+
+	/*QUAKED item_doppleganger (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
+	*/
+	{
+		"item_doppleganger",								// classname
+		Pickup_Doppleganger,								// pickup function
+		Use_Doppleganger,									// use function
+		Drop_General,										// drop function
+		NULL,												// weapon think function
+		"items/pkup.wav",									// pick up sound
+		"models/items/dopple/tris.md2",						// world model
+		EF_ROTATE,											// world model flags
+		NULL,												// view model
+		"p_doppleganger",									// icon
+		"Doppleganger",										// name printed when picked up 
+		0,													// number of digits for statusbar
+		90,													// respawn time
+		NULL,												// ammo type used 
+		IT_POWERUP,											// inventory flags
+		0,
+		NULL,												// info (void *)
+		0,													// tag
+		"models/objects/dopplebase/tris.md2 models/items/spawngro2/tris.md2 models/items/hunter/tris.md2 models/items/vengnce/tris.md2",		// precaches
+	},//item38
+
+	// ROGUE
+	// ======================================
 
 	// end of list marker
 	{NULL},
