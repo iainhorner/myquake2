@@ -906,6 +906,14 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_magslug	= 50;
 	client->pers.max_trap		= 5;
 	client->pers.connected = true;
+
+	//ROGUE
+	// FIXME - give these real numbers....
+	client->pers.max_prox = 50;
+	client->pers.max_tesla = 50;
+	client->pers.max_flechettes = 200;
+	client->pers.max_rounds = 100;
+	//ROGUE
 }
 
 

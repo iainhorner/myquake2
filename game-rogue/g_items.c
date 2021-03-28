@@ -2210,7 +2210,8 @@ always owned, never in the world
 		IT_AMMO,
 		0,
 		NULL,
-		AMMO_FLECHETTES
+		AMMO_FLECHETTES,
+		/* precache */ ""
 	},
 /*QUAKED ammo_prox (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
 */
