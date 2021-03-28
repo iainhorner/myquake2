@@ -192,10 +192,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	if (other->client->pers.weapon != ent->item && 
-		(other->client->pers.inventory[index] == 1) &&
-//		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
-		( other->client->pers.weapon == FindItem("blaster") ) )
+	if (other->client->pers.weapon != ent->item && other->client->pers.inventory[index] == 1)
 		other->client->newweapon = ent->item;
 
 	return true;
