@@ -311,17 +311,24 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_HELD_TRAP:
 				message = "forgot to let go of the trap";
 				break;
-			// Nick - record laser death if suicide (otherwise it runs thru' to default).
-	                case MOD_TARGET_LASER:
-                               if (IsNeutral(self))
-                                        message = "saw its own light";
-                                else if (IsFemale(self))
-                                        message = "saw her own light";
-                                else
-                                        message = "saw his own light";
+	        case MOD_TARGET_LASER:
+                 if (IsNeutral(self))
+                       message = "saw its own light";
+                 else if (IsFemale(self))
+                        message = "saw her own light";
+                 else
+                       message = "saw his own light";
 			break;
-			// End Nick
-
+			//ROGUE
+			case MOD_DOPPLE_EXPLODE:
+				if (IsNeutral(self))
+					message = "got caught in it's own trap";
+				else if (IsFemale(self))
+					message = "got caught in her own trap";
+				else
+					message = "got caught in his own trap";
+				break;
+				//ROGUE
 			default:
 				if (IsNeutral(self))
 					message = "killed itself";
@@ -407,10 +414,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				message = "almost dodged";
 				message2 = "'s rocket";
 				break;
-                        case MOD_P_SPLASH:
-                                message = "was fried alive by";
-                                message2 = "'s Phalanx blast";
-                                break;
+            case MOD_P_SPLASH:
+                message = "was fried alive by";
+                message2 = "'s Phalanx blast";
+                break;
 			case MOD_HYPERBLASTER:
 				message = "was melted by";
 				message2 = "'s hyperblaster";
@@ -458,7 +465,6 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				message = "was to close to";
 				message2 = "'s trap";
 				break;
-			// RAFAEL 14-APR-98
 			case MOD_RIPPER:
 				message = "ripped to shreds by";
 				message2 = "'s ripper gun";
@@ -469,7 +475,65 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_TRAP:
 				message = "caught in trap by";
 				break;
-			// END 14-APR-98
+				//===============
+				//ROGUE
+			case MOD_CHAINFIST:
+				message = "was shredded by";
+				message2 = "'s ripsaw";
+				break;
+			case MOD_DISINTEGRATOR:
+				message = "lost his grip courtesy of";
+				message2 = "'s disintegrator";
+				break;
+			case MOD_ETF_RIFLE:
+				message = "was perforated by";
+				break;
+			case MOD_HEATBEAM:
+				message = "was scorched by";
+				message2 = "'s plasma beam";
+				break;
+			case MOD_TESLA:
+				message = "was enlightened by";
+				message2 = "'s tesla mine";
+				break;
+			case MOD_PROX:
+				message = "got too close to";
+				message2 = "'s proximity mine";
+				break;
+			case MOD_NUKE:
+				message = "was nuked by";
+				message2 = "'s antimatter bomb";
+				break;
+			case MOD_VENGEANCE_SPHERE:
+				message = "was purged by";
+				message2 = "'s vengeance sphere";
+				break;
+			case MOD_DEFENDER_SPHERE:
+				message = "had a blast with";
+				message2 = "'s defender sphere";
+				break;
+			case MOD_HUNTER_SPHERE:
+				message = "was killed like a dog by";
+				message2 = "'s hunter sphere";
+				break;
+			case MOD_TRACKER:
+				message = "was annihilated by";
+				message2 = "'s disruptor";
+				break;
+			case MOD_DOPPLE_EXPLODE:
+				message = "was blown up by";
+				message2 = "'s doppleganger";
+				break;
+			case MOD_DOPPLE_VENGEANCE:
+				message = "was purged by";
+				message2 = "'s doppleganger";
+				break;
+			case MOD_DOPPLE_HUNTER:
+				message = "was hunted down by";
+				message2 = "'s doppleganger";
+				break;
+				//ROGUE
+				//===============
 			}
 
 			if (message)
