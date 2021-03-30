@@ -148,43 +148,51 @@ void BeginIntermission (edict_t *targ)
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
 			continue;
-		if (game.clients[i].resp.score > highScore) 
+		if (game.clients[i].resp.score > highScore)
 			highScore = game.clients[i].resp.score;
-
-
 	}
 
-	// move all clients to the intermission point
-	int killsoundDelay = 3.0;
-	for (i=0 ; i<maxclients->value ; i++)
+	int highScorers = 0;
+	for (i = 0; i < maxclients->value; i++)
 	{
 		client = g_edicts + 1 + i;
 		if (!client->inuse)
 			continue;
-		score = game.clients[i].resp.score;
-		deaths = game.clients[i].resp.deaths;
+		if (game.clients[i].resp.score > 0 && game.clients[i].resp.score == highScore)
+			highScorers++;
+	}
 
-		if (deaths == 0 && highScore == score) {
-			edict_t* timer = G_Spawn();
-			timer->think = kill_delayedsound;
-			timer->nextthink = level.time + killsoundDelay;
-			timer->soundindex = gi.soundindex("ut_sounds/flawless_victory.wav");
-			timer->activator = client;
-			gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
-		}
-		else if (highScore == score) {
-			edict_t* timer = G_Spawn();
-			timer->think = kill_delayedsound;
-			timer->nextthink = level.time + killsoundDelay;
-			timer->soundindex = gi.soundindex("ut_sounds/winner.wav");
-			timer->activator = client;
-			gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
-		}
-		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/flawless_victory.wav"), 1, ATTN_NORM, 0);
-		//else if (level.total_frags == score)
-		//	gi.sound(client, CHAN_AUTO, gi.soundindex("ut_sounds/winner.wav"), 1, ATTN_NORM, 0);
+	// move all clients to the intermission point
+	int killsoundDelay = 3.0;
+	for (i = 0; i < maxclients->value; i++)
+	{
+		client = g_edicts + 1 + i;
+		if (!client->inuse)
+			continue;
 
-		MoveClientToIntermission (client);
+		if (highScorers > 0) {
+			if (highScorers == 1) {
+				if (game.clients[i].resp.score > 0 && game.clients[i].resp.deaths == 0 && highScore == game.clients[i].resp.score) {
+					edict_t* timer = G_Spawn();
+					timer->think = kill_delayedsound;
+					timer->nextthink = level.time + killsoundDelay;
+					timer->soundindex = gi.soundindex("ut_sounds/flawless_victory.wav");
+					timer->activator = client;
+					gi.bprintf(PRINT_MEDIUM, "%s had a flawless victory!!!\n", client->client->pers.netname);
+				}
+				else if (game.clients[i].resp.score > 0 && highScore == game.clients[i].resp.score) {
+					edict_t* timer = G_Spawn();
+					timer->think = kill_delayedsound;
+					timer->nextthink = level.time + killsoundDelay;
+					timer->soundindex = gi.soundindex("ut_sounds/winner.wav");
+					timer->activator = client;
+					gi.bprintf(PRINT_MEDIUM, "%s is the winner!!!\n", client->client->pers.netname);
+				}
+			}
+			else if (highScore == game.clients[i].resp.score)
+				gi.bprintf(PRINT_MEDIUM, "%s is joint winner!!!\n", client->client->pers.netname);
+		}
+		MoveClientToIntermission(client);
 	}
 }
 
