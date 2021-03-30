@@ -260,6 +260,11 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 		other->client->pers.max_cells = 250;
 	if (other->client->pers.max_slugs < 75)
 		other->client->pers.max_slugs = 75;
+	//ROGUE
+	if (other->client->pers.max_flechettes < 250)
+		other->client->pers.max_flechettes = 250;
+	if (other->client->pers.max_rounds < 150)
+		other->client->pers.max_rounds = 150;
 	// RAFAEL
 	if (other->client->pers.max_magslug < 75)
 		other->client->pers.max_magslug = 75;
@@ -313,7 +318,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 		other->client->pers.max_flechettes = 200;
 	if (other->client->pers.max_rounds < 200)
 		other->client->pers.max_rounds = 200;
-	//pmm
+	//ROGUE
 
 	item = FindItem("Bullets");
 	if (item)
