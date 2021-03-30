@@ -438,6 +438,15 @@ void SV_CalcBlend (edict_t *ent)
 		if (remaining > 30 || (remaining & 4) )
 			SV_AddBlend (1, 0.2, 0.5, 0.08, ent->client->ps.blend);
 	}
+	//ROGUE
+	else if (ent->client->double_framenum > level.framenum)
+	{
+		remaining = ent->client->double_framenum - level.framenum;
+		if (remaining == 30)	// beginning to fade
+			gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/ddamage2.wav"), 1, ATTN_NORM, 0);
+		if (remaining > 30 || (remaining & 4))
+			SV_AddBlend(0.9, 0.7, 0, 0.08, ent->client->ps.blend);
+	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{
 
@@ -756,6 +765,17 @@ void G_SetClientEffects (edict_t *ent)
 	if (ent->health <= 0 || level.intermissiontime)
 		return;
 
+	//ROGUE
+	if (ent->flags & FL_DISGUISED)
+		ent->s.renderfx |= RF_USE_DISGUISE;
+
+	if (gamerules && gamerules->value)
+	{
+		if (DMGame.PlayerEffects)
+			DMGame.PlayerEffects(ent);
+	}
+	//ROGUE
+
 	if (ent->powerarmor_time > level.time)
 	{
 		pa_type = PowerArmorType (ent);
@@ -776,6 +796,23 @@ void G_SetClientEffects (edict_t *ent)
 		if (remaining > 30 || (remaining & 4) )
 			ent->s.effects |= EF_QUAD;
 	}
+
+	//ROGUE
+	if (ent->client->double_framenum > level.framenum)
+	{
+		remaining = ent->client->double_framenum - level.framenum;
+		if (remaining > 30 || (remaining & 4))
+			ent->s.effects |= EF_DOUBLE;
+	}
+	if ((ent->client->owned_sphere) && (ent->client->owned_sphere->spawnflags == 1))
+	{
+		ent->s.effects |= EF_HALF_DAMAGE;
+	}
+	if (ent->client->tracker_pain_framenum > level.framenum)
+	{
+		ent->s.effects |= EF_TRACKERTRAIL;
+	}
+	//ROGUE
 
 	// RAFAEL
 	if (ent->client->quadfire_framenum > level.framenum)

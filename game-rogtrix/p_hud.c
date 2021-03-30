@@ -32,6 +32,12 @@ void MoveClientToIntermission (edict_t *ent)
 	ent->client->grenade_blew_up = false;
 	ent->client->grenade_time = 0;
 
+	//ROGUE
+	ent->client->ps.rdflags &= ~RDF_IRGOGGLES;		// PGM
+	ent->client->ir_framenum = 0;					// PGM
+	ent->client->nuke_framenum = 0;					// PMM
+	ent->client->double_framenum = 0;				// PMM
+
 	// RAFAEL
 	ent->client->quadfire_framenum = 0;
 	
@@ -634,6 +640,13 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
 		ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
 	}
+	//ROGUE
+	else if (ent->client->double_framenum > level.framenum)
+	{
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_double");
+		ent->client->ps.stats[STAT_TIMER] = (ent->client->double_framenum - level.framenum) / 10;
+	}
+	//ROGUE
 	// RAFAEL
 	else if (ent->client->quadfire_framenum > level.framenum)
 	{
@@ -657,6 +670,26 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_rebreather");
 		ent->client->ps.stats[STAT_TIMER] = (ent->client->breather_framenum - level.framenum)/10;
 	}
+	//ROGUE
+	else if (ent->client->owned_sphere)
+	{
+		if (ent->client->owned_sphere->spawnflags == 1)			// defender
+			ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_defender");
+		else if (ent->client->owned_sphere->spawnflags == 2)		// hunter
+			ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_hunter");
+		else if (ent->client->owned_sphere->spawnflags == 4)		// vengeance
+			ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_vengeance");
+		else													// error case
+			ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("i_fixme");
+
+		ent->client->ps.stats[STAT_TIMER] = (int)(ent->client->owned_sphere->wait - level.time);
+	}
+	else if (ent->client->ir_framenum > level.framenum)
+	{
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("p_ir");
+		ent->client->ps.stats[STAT_TIMER] = (ent->client->ir_framenum - level.framenum) / 10;
+	}
+	//ROGUE
 	else
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = 0;
