@@ -38,18 +38,8 @@ char *ReadEntFile(char *filename)
     char   entfilename[MAX_QPATH] = ""; 
     char   *newentities;      
 
-	// Nick - move location of entfile directory.
-	// Depends on game being built
-#ifndef XATRIX 
-    	sprintf(entfilename, "baseq2/entfiles/%s.ent", mapname); 
-#else
-    	sprintf(entfilename, "xatrix/entfiles/%s.ent", mapname); 
-#endif
 
-    	// Nick - I am not worried about this - turn on the above include ctype.h if required
-	// convert string to all lowercase (for Linux) 
-    	//for (i = 0; entfilename[i]; i++) 
-    	//	entfilename[i] = tolower(entfilename[i]); 
+    sprintf(entfilename, "rogtrix/entfiles/%s.ent", mapname); 
  
     newentities = ReadEntFile(entfilename); 
  
