@@ -48,12 +48,12 @@ static int	power_shield_index;
 #define HEALTH_TIMED		2
 
 void Use_Quad (edict_t *ent, gitem_t *item);
-// RAFAEL
 void Use_QuadFire (edict_t *ent, gitem_t *item);
+void Use_Double(edict_t* ent, gitem_t* item);
 
 static int	quad_drop_timeout_hack;
-// RAFAEL
 static int	quad_fire_drop_timeout_hack;
+static int	double_drop_timeout_hack;
 
 //======================================================================
 
@@ -183,32 +183,31 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	int		quantity;
 
 	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
-//	if ((skill->value == 1 && quantity >= 2) || (skill->value >= 2 && quantity >= 1))
-//		return false;
 
-//	if ((coop->value) && (ent->item->flags & IT_STAY_COOP) && (quantity > 0))
-//		return false;
 
 	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;
 
-//	if (deathmatch->value)
-//	{
 		if (!(ent->spawnflags & DROPPED_ITEM) )
 			SetRespawn (ent, ent->item->quantity);
-		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
+
+		if (((int)dmflags->value & DF_INSTANT_ITEMS) && (ent->item->use == Use_Quad))
 		{
 			if ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
 				quad_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
 			ent->item->use (other, ent->item);
 		}
-		// RAFAEL
-		else if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_QuadFire) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
+		else if (((int)dmflags->value & DF_INSTANT_ITEMS) && (ent->item->use == Use_QuadFire))
 		{
 			if ((ent->item->use == Use_QuadFire) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
 				quad_fire_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
 			ent->item->use (other, ent->item);
 		}
-//	}
+		else if (((int)dmflags->value & DF_INSTANT_ITEMS) && (ent->item->use == Use_Double))
+		{
+			if ((ent->item->use == Use_Double) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
+				double_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
+			ent->item->use(other, ent->item);
+		}
 
 	return true;
 }
@@ -451,13 +450,26 @@ void Use_IR(edict_t* ent, gitem_t* item)
 
 void Use_Double(edict_t* ent, gitem_t* item)
 {
+	int		timeout;
+
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem(ent);
 
-	if (ent->client->double_framenum > level.framenum)
-		ent->client->double_framenum += 300;
+	if (double_drop_timeout_hack)
+	{
+		timeout = double_drop_timeout_hack;
+		double_drop_timeout_hack = 0;
+	}
 	else
-		ent->client->double_framenum = level.framenum + 300;
+	{
+		timeout = 300;
+	}
+
+
+	if (ent->client->double_framenum > level.framenum)
+		ent->client->double_framenum += timeout;
+	else
+		ent->client->double_framenum = level.framenum + timeout;
 
 	gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/ddamage1.wav"), 1, ATTN_NORM, 0);
 }

@@ -707,7 +707,7 @@ void TossClientWeapon (edict_t *self)
 	gitem_t		*item;
 	edict_t		*drop;
 	qboolean	quad;
-	// RAFAEL
+	qboolean	doubledamage;
 	qboolean	quadfire;
 	float		spread;
 
@@ -737,6 +737,11 @@ void TossClientWeapon (edict_t *self)
 	else
 		quad = (self->client->quad_framenum > (level.framenum + 10));
 
+	if (!((int)(dmflags->value) & DF_QUAD_DROP))
+		doubledamage = false;
+	else
+		doubledamage = (self->client->double_framenum > (level.framenum + 10));
+
 	// RAFAEL
 	if (!((int)(dmflags->value) & DF_QUADFIRE_DROP))
 		quadfire = false;
@@ -746,6 +751,8 @@ void TossClientWeapon (edict_t *self)
 	
 	if (item && quad)
 		spread = 22.5;
+	else if (item && doubledamage)
+		spread = 12.5;
 	else if (item && quadfire)
 		spread = 12.5;
 	else
@@ -769,6 +776,18 @@ void TossClientWeapon (edict_t *self)
 
 		drop->touch = Touch_Item;
 		drop->nextthink = level.time + (self->client->quad_framenum - level.framenum) * FRAMETIME;
+		drop->think = G_FreeEdict;
+	}
+
+	if (doubledamage)
+	{
+		self->client->v_angle[YAW] += spread;
+		drop = Drop_Item(self, FindItemByClassname("item_double"));
+		self->client->v_angle[YAW] -= spread;
+		drop->spawnflags |= DROPPED_PLAYER_ITEM;
+
+		drop->touch = Touch_Item;
+		drop->nextthink = level.time + (self->client->double_framenum - level.framenum) * FRAMETIME;
 		drop->think = G_FreeEdict;
 	}
 
