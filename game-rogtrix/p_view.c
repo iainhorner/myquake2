@@ -818,8 +818,10 @@ void G_SetClientEffects (edict_t *ent)
 	if (ent->client->quadfire_framenum > level.framenum)
 	{
 		remaining = ent->client->quadfire_framenum - level.framenum;
-		if (remaining > 30 || (remaining & 4) )
-			ent->s.effects |= EF_QUAD;
+		if (remaining > 30 || (remaining & 4)) {
+			ent->s.effects |= EF_COLOR_SHELL;
+			ent->s.renderfx |= RF_SHELL_RED | RF_SHELL_BLUE;
+		}
 	}
 
 // Nick	
