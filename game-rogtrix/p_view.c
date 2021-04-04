@@ -801,8 +801,14 @@ void G_SetClientEffects (edict_t *ent)
 	if (ent->client->double_framenum > level.framenum)
 	{
 		remaining = ent->client->double_framenum - level.framenum;
-		if (remaining > 30 || (remaining & 4))
-			ent->s.effects |= EF_DOUBLE;
+		if (remaining > 30 || (remaining & 4)) {
+			if (remaining > 30 || (remaining & 4)) {
+				ent->s.effects |= EF_COLOR_SHELL;
+				ent->s.renderfx |= RF_SHELL_BLUE | RF_SHELL_GREEN;
+				//ent->s.effects |= EF_DOUBLE;
+			}
+		}
+			
 	}
 	if ((ent->client->owned_sphere) && (ent->client->owned_sphere->spawnflags == 1))
 	{
