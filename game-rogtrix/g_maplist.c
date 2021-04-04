@@ -10,10 +10,7 @@ void GetMapList()
 	char path[100] = { 0 };
 	char null[5];
 
-	char* gameName = GAMEVERSION;
-
-	strcpy(path, gameName);
-	strcat(path, "/");
+	strcat(path, "rogtrix/");
 	strcat(path, sv_maplist->string);
 
 
