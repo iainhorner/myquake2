@@ -3126,6 +3126,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	ent->svflags &= ~SVF_NOCLIENT;
 	ent->client->resp.ctf_team = desired_team;
 	ent->client->resp.ctf_state = 0;
+	ent->client->resp.score = 0;
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
