@@ -71,7 +71,7 @@ typedef enum {false, true}	qboolean;
 // Nick - 07/09/2005 - Random map stuff - Musashi
 //CW++
 #define MAX_MAPS        1000
-//#define MAX_OLDMAPS	3               //TODO: add this to a Cvar
+#define MAX_OLDMAPS	3               //TODO: add this to a Cvar
 //CW--
 // End Nick
 
