@@ -161,6 +161,9 @@ void InitGame (void)
 	scoreboard_time = gi.cvar("scoreboard_time", "0", CVAR_LATCH);
 
 	// change anytime vars
+	respawn_protect_time = gi.cvar("respawn_protect_time", "3", CVAR_LATCH);
+	number_maps_no_repeat = gi.cvar("number_maps_no_repeat", "3", CVAR_LATCH);
+	blaster_swap = gi.cvar("machinegun_start", "0", CVAR_LATCH);
 	dmflags = gi.cvar ("dmflags", "0", CVAR_SERVERINFO);
 	fraglimit = gi.cvar ("fraglimit", "0", CVAR_SERVERINFO);
 	timelimit = gi.cvar ("timelimit", "0", CVAR_SERVERINFO);

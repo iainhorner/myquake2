@@ -26,6 +26,8 @@ cvar_t	*allow_quad;
 cvar_t	*allow_power_screen;
 cvar_t	*allow_power_shield;
 cvar_t  *blaster_swap;
+cvar_t	*respawn_protect_time;
+cvar_t	*number_maps_no_repeat;
 cvar_t  *mapcycle_always;
 cvar_t  *scoreboard_time;
 cvar_t	*fraglimit;
@@ -451,11 +453,10 @@ char *FindRandomMap(FILE *iostream)
                                         match_found = false;
                                         for (i = 0; i < MAX_OLDMAPS; i++)
                                         {
-                        //gi.dprintf("g_oldmap: %s\n", g_oldmaps[i].mapname);
 
                                                 if ( (Q_stricmp(g_oldmaps[i].mapname, bspname) == 0) )
                                                         match_found = true;
-                			}
+                						}
                                         if (!match_found)
                                                 finished = true;
                                 }

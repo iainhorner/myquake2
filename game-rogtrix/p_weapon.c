@@ -746,6 +746,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 
 	// ============
 	// PGM
+
 	switch (ent->client->pers.weapon->tag)
 	{
 	case AMMO_GRENADES:

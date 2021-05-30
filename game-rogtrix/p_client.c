@@ -965,7 +965,7 @@ void InitClientPersistant (gclient_t *client)
 	gitem_t		*item;
 
 	Q_memset (&client->pers, 0, sizeof(client->pers));
-	blaster_swap = gi.cvar("machinegun_start", "0", CVAR_LATCH);
+
 	if (blaster_swap->value > 0) {
 		item = FindItem("Machinegun");
 	}
@@ -1687,7 +1687,7 @@ void PutClientInServer (edict_t *ent)
 	}
 
 	gi.linkentity (ent);
-	blaster_swap = gi.cvar("machinegun_start", "0", CVAR_LATCH);
+
 	if (blaster_swap->value > 0) 
 	{
 		gitem_t* item;
@@ -1695,6 +1695,8 @@ void PutClientInServer (edict_t *ent)
 		Add_Ammo(ent, item, 200);
 	}
 
+
+	ent->client->invincible_framenum = level.framenum + (int)(respawn_protect_time->value * 10);
 
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;
