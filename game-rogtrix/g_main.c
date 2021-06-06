@@ -26,7 +26,6 @@ cvar_t	*allow_quad;
 cvar_t	*allow_power_screen;
 cvar_t	*allow_power_shield;
 cvar_t  *blaster_swap;
-cvar_t	*respawn_protect_time;
 cvar_t	*number_maps_no_repeat;
 cvar_t  *mapcycle_always;
 cvar_t  *scoreboard_time;

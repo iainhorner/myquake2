@@ -829,7 +829,6 @@ extern  cvar_t	*allow_quad;
 extern  cvar_t	*allow_power_screen;
 extern  cvar_t	*allow_power_shield;
 extern  cvar_t  *blaster_swap;
-extern  cvar_t	*respawn_protect_time;
 extern  cvar_t  *mapcycle_always;
 extern  cvar_t  *scoreboard_time;
 extern	cvar_t	*fraglimit;

@@ -455,7 +455,7 @@ void SV_CalcBlend (edict_t *ent)
                		{
 			remaining = ent->client->invincible_framenum - level.framenum;
 			if (remaining == 30)    // beginning to fade
-                        gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
+                        //gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);this sound gets annoying!!
                 	if (remaining > 10 || (remaining & 2) )
                         SV_AddBlend (1, 1, 0.7, 0.08, ent->client->ps.blend);
 			}
@@ -463,7 +463,7 @@ void SV_CalcBlend (edict_t *ent)
 			{
 			remaining = ent->client->invincible_framenum - level.framenum;
 			if (remaining == 30)	// beginning to fade
-			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
+			//gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0); this sound gets annoying!!
 			if (remaining > 30 || (remaining & 4) )
 			SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
 		}
@@ -837,8 +837,6 @@ void G_SetClientEffects (edict_t *ent)
 //		if (remaining > 30 || (remaining & 4) )
 //			ent->s.effects |= EF_PENT;
 //	}
-// New stuff here
-// Nick - change this so respawners show white instead of red.
 // The '1' added to (r_invul->value/10) is to allow some grace in timings.
 	if ( (r_invul->value) && (ent->client->invincible_framenum > level.framenum)
 	&& (((int)level.time - (int)ent->client->respawn_time) <= 1 + ((int)(r_invul->value/10))) )
@@ -847,8 +845,7 @@ void G_SetClientEffects (edict_t *ent)
 		remaining = ent->client->invincible_framenum - level.framenum;
 		if (remaining > 30 || (remaining & 4) )
 			{
-			ent->s.effects |= EF_COLOR_SHELL;
-			ent->s.renderfx |= (RF_SHELL_RED|RF_SHELL_GREEN/*|RF_SHELL_BLUE*/);
+			ent->s.effects |= EF_PENT;
 			}
 	}
 

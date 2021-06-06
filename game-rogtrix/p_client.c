@@ -1695,9 +1695,6 @@ void PutClientInServer (edict_t *ent)
 		Add_Ammo(ent, item, 200);
 	}
 
-
-	ent->client->invincible_framenum = level.framenum + (int)(respawn_protect_time->value * 10);
-
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;
 	ChangeWeapon (ent);

@@ -161,7 +161,6 @@ void InitGame (void)
 	scoreboard_time = gi.cvar("scoreboard_time", "0", CVAR_LATCH);
 
 	// change anytime vars
-	respawn_protect_time = gi.cvar("respawn_protect_time", "3", CVAR_LATCH);
 	blaster_swap = gi.cvar("machinegun_start", "0", CVAR_LATCH);
 	dmflags = gi.cvar ("dmflags", "0", CVAR_SERVERINFO);
 	fraglimit = gi.cvar ("fraglimit", "0", CVAR_SERVERINFO);
@@ -194,7 +193,9 @@ void InitGame (void)
 	// Nick level countdown stuff	
 	countdelay = gi.cvar  ("countdelay", "0", CVAR_LATCH); // Countdown off by default
 	//Nick - Respawn invul.
-	r_invul = gi.cvar ("r_invul", "0", 0);
+	r_invul = gi.cvar ("r_invul", "0", 0); //TODO: rename to 'allow_respawn_invuln'
+	r_invul->value = (int)(r_invul->value * 10); //* 10 becaue runs frames at 10mhz
+
 	// Nick - End of map muzic
 	eom_muzic = gi.cvar ("eom_muzic", "0", 0);
 	// Nick - Ripper self hurt
