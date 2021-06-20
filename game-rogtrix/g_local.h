@@ -830,6 +830,7 @@ extern  cvar_t	*allow_power_screen;
 extern  cvar_t	*allow_power_shield;
 extern  cvar_t  *blaster_swap;
 extern  cvar_t  *mapcycle_always;
+extern  cvar_t  *respawn_protect_time;
 extern  cvar_t  *scoreboard_time;
 extern	cvar_t	*fraglimit;
 extern	cvar_t	*timelimit;
@@ -874,8 +875,6 @@ extern	cvar_t	*randomrespawn;
 
 // Nick level countdown stuff
 extern	cvar_t	*countdelay;
-// Nick - Repawn invul.
-extern	cvar_t	*r_invul;
 // Nick - End of map music
 extern cvar_t *eom_muzic;
 // Nick - Ripper self hurt

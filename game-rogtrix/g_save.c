@@ -168,6 +168,7 @@ void InitGame (void)
 	password = gi.cvar ("password", "", CVAR_USERINFO);
 	spectator_password = gi.cvar ("spectator_password", "", 0);
 	filterban = gi.cvar ("filterban", "1", 0);
+	respawn_protect_time = gi.cvar("respawn_protect_time", "0", 0);
 
 	g_select_empty = gi.cvar ("g_select_empty", "0", CVAR_ARCHIVE);
 
@@ -192,9 +193,6 @@ void InitGame (void)
 
 	// Nick level countdown stuff	
 	countdelay = gi.cvar  ("countdelay", "0", CVAR_LATCH); // Countdown off by default
-	//Nick - Respawn invul.
-	r_invul = gi.cvar ("r_invul", "0", 0); //TODO: rename to 'allow_respawn_invuln'
-	r_invul->value = (int)(r_invul->value * 10); //* 10 becaue runs frames at 10mhz
 
 	// Nick - End of map muzic
 	eom_muzic = gi.cvar ("eom_muzic", "0", 0);

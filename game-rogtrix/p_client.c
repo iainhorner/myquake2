@@ -1406,16 +1406,6 @@ void respawn (edict_t *self)
 		self->client->ps.pmove.pm_time = 14;
 
 		self->client->respawn_time = (level.time);
-
-		// Nick - add (r_invul->value/10) seconds of invulnerability at respawn.
-		if (r_invul->value)
-			self->client->invincible_framenum = (level.framenum + r_invul->value);
-		
-	//	return;
-	//	}
-
-	// restart the entire server
-//	gi.AddCommandString ("menu_loadgame\n");
 }
 
 /* 
@@ -1694,6 +1684,9 @@ void PutClientInServer (edict_t *ent)
 		item = FindItem("bullets");
 		Add_Ammo(ent, item, 200);
 	}
+
+	if (respawn_protect_time->value > 0)
+			ent->client->invincible_framenum = level.framenum + (int)(respawn_protect_time->value * 10);
 
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;

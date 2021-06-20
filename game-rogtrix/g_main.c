@@ -28,6 +28,7 @@ cvar_t	*allow_power_shield;
 cvar_t  *blaster_swap;
 cvar_t	*number_maps_no_repeat;
 cvar_t  *mapcycle_always;
+cvar_t  *respawn_protect_time;
 cvar_t  *scoreboard_time;
 cvar_t	*fraglimit;
 cvar_t	*timelimit;
@@ -74,8 +75,6 @@ cvar_t	*randomrespawn;
 
 // Nick - level countdown stuff
 cvar_t	*countdelay;
-// Nick Respawn invul
-cvar_t	*r_invul;
 // Nick End of map music
 cvar_t *eom_muzic;
 // Nick - Ripper self hurt

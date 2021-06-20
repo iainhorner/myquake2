@@ -449,24 +449,11 @@ void SV_CalcBlend (edict_t *ent)
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{
-
-        		if ( (r_invul->value) && (((int)level.time - (int)ent->client->respawn_time)
-			<= 1 + ((int)(r_invul->value/10))) )
-               		{
 			remaining = ent->client->invincible_framenum - level.framenum;
-			if (remaining == 30)    // beginning to fade
-                        //gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);this sound gets annoying!!
-                	if (remaining > 10 || (remaining & 2) )
-                        SV_AddBlend (1, 1, 0.7, 0.08, ent->client->ps.blend);
-			}
-			else
-			{
-			remaining = ent->client->invincible_framenum - level.framenum;
-			if (remaining == 30)	// beginning to fade
-			//gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0); this sound gets annoying!!
+			if (respawn_protect_time->value == 0 && remaining == 30)	// beginning to fade
+			  gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
 			if (remaining > 30 || (remaining & 4) )
 			SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
-		}
 	}
 	else if (ent->client->enviro_framenum > level.framenum)
 	{
@@ -830,42 +817,13 @@ void G_SetClientEffects (edict_t *ent)
 		}
 	}
 
-// Nick	
-//	if (ent->client->invincible_framenum > level.framenum)
-//	{
-//		remaining = ent->client->invincible_framenum - level.framenum;
-//		if (remaining > 30 || (remaining & 4) )
-//			ent->s.effects |= EF_PENT;
-//	}
-// The '1' added to (r_invul->value/10) is to allow some grace in timings.
-	if ( (r_invul->value) && (ent->client->invincible_framenum > level.framenum)
-	&& (((int)level.time - (int)ent->client->respawn_time) <= 1 + ((int)(r_invul->value/10))) )
-	{
-
-		remaining = ent->client->invincible_framenum - level.framenum;
-		if (remaining > 30 || (remaining & 4) )
-			{
-			ent->s.effects |= EF_PENT;
-			}
-	}
-
-     	else if (ent->client->invincible_framenum > level.framenum)
-
+    if (ent->client->invincible_framenum > level.framenum)
 	 {
-	//gi.bprintf (PRINT_HIGH, "%i respawn time no work\n", (int)ent->client->respawn_time);
 		remaining = ent->client->invincible_framenum - level.framenum;
 		if (remaining > 30 || (remaining & 4) )
 			ent->s.effects |= EF_PENT;
 	 }
-// End Nick
 
-
-	// show cheaters!!!
-	//if (ent->flags & FL_GODMODE)
-	//{
-	//	ent->s.effects |= EF_COLOR_SHELL;
-	//	ent->s.renderfx |= (RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE);
-	//}
 }
 
 
