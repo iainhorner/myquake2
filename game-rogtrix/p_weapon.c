@@ -163,13 +163,16 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	if (!(ent->spawnflags & DROPPED_ITEM) )
 	{
-		// give them some ammo with it
-		ammo = FindItem (ent->item->ammo);
-		// Don't get infinite ammo with trap
-		if ( ((int)dmflags->value & DF_INFINITE_AMMO) && Q_stricmp(ent->item->pickup_name, "ammo_trap") )
-			Add_Ammo (other, ammo, 1000);
-		else
-			Add_Ammo (other, ammo, ammo->quantity);
+		// give them some ammo with it - IF APPROPRIATE
+		if (ent->item->ammo)
+		{
+			ammo = FindItem(ent->item->ammo);
+			// Don't get infinite ammo with trap
+			if (((int)dmflags->value & DF_INFINITE_AMMO) && Q_stricmp(ent->item->pickup_name, "ammo_trap"))
+				Add_Ammo(other, ammo, 1000);
+			else
+				Add_Ammo(other, ammo, ammo->quantity);
+		}
 
 		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) )
 		{
