@@ -298,7 +298,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if (!targ->takedamage)
 		return;
 
-	if (targ->client->cloaking_framenum >= level.framenum)
+	if (targ->client != NULL && targ->client->cloaking_framenum >= level.framenum)
 		damage = damage / 2;
 
 	// friendly fire avoidance
