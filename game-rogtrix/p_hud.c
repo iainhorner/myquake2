@@ -40,6 +40,7 @@ void MoveClientToIntermission (edict_t *ent)
 
 	// RAFAEL
 	ent->client->quadfire_framenum = 0;
+	ent->client->cloaking_framenum = 0;
 	
 	// RAFAEL
 	ent->client->trap_blew_up = false;
@@ -650,10 +651,13 @@ void G_SetStats (edict_t *ent)
 	// RAFAEL
 	else if (ent->client->quadfire_framenum > level.framenum)
 	{
-		// note to self
-		// need to change imageindex
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quadfire");
 		ent->client->ps.stats[STAT_TIMER] = (ent->client->quadfire_framenum - level.framenum)/10;
+	}
+	else if (ent->client->cloaking_framenum > level.framenum)
+	{
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("i_powershield");
+		ent->client->ps.stats[STAT_TIMER] = (ent->client->cloaking_framenum - level.framenum) / 10;
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{

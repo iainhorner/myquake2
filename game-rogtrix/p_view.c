@@ -438,6 +438,14 @@ void SV_CalcBlend (edict_t *ent)
 		if (remaining > 30 || (remaining & 4) )
 			SV_AddBlend (1, 0.2, 0.5, 0.08, ent->client->ps.blend);
 	}
+	else if (ent->client->cloaking_framenum > level.framenum)
+	{
+		remaining = ent->client->cloaking_framenum - level.framenum;
+		if (remaining == 30)	// beginning to fade
+			gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
+		if (remaining > 30 || (remaining & 4))
+			SV_AddBlend(1, 0.2, 0.5, 0.08, ent->client->ps.blend);
+	}
 	//ROGUE
 	else if (ent->client->double_framenum > level.framenum)
 	{
@@ -814,6 +822,15 @@ void G_SetClientEffects (edict_t *ent)
 		if (remaining > 30 || (remaining & 4)) {
 			ent->s.effects |= EF_COLOR_SHELL | EF_TELEPORTER;
 			ent->s.renderfx |= RF_SHELL_RED | RF_SHELL_BLUE;
+		}
+	}
+
+	if (ent->client->cloaking_framenum > level.framenum)
+	{
+		remaining = ent->client->cloaking_framenum - level.framenum;
+		if (remaining > 30 || (remaining & 4)) {
+			ent->s.effects |= EF_SPHERETRANS;
+			ent->s.renderfx |= RF_TRANSLUCENT;
 		}
 	}
 

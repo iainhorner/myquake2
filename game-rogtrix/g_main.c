@@ -21,6 +21,7 @@ cvar_t	*dmflags;
 //cvar_t	*skill; Nick - 18/09/2005 - No skill in DM
 cvar_t  *allow_invulnerability;
 cvar_t  *allow_powershield;
+cvar_t	*allow_cloaking_shield;
 cvar_t	*allow_bfg;
 cvar_t	*allow_quad;
 cvar_t	*allow_power_screen;

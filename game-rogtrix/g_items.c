@@ -49,10 +49,12 @@ static int	power_shield_index;
 
 void Use_Quad (edict_t *ent, gitem_t *item);
 void Use_QuadFire (edict_t *ent, gitem_t *item);
+void Use_CloakingShield(edict_t* ent, gitem_t* item);
 void Use_Double(edict_t* ent, gitem_t* item);
 
 static int	quad_drop_timeout_hack;
 static int	quad_fire_drop_timeout_hack;
+static int	cloaking_drop_timeout_hack;
 static int	double_drop_timeout_hack;
 
 //======================================================================
@@ -201,6 +203,12 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 			if ((ent->item->use == Use_QuadFire) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
 				quad_fire_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
 			ent->item->use (other, ent->item);
+		}
+		else if (((int)dmflags->value & DF_INSTANT_ITEMS) && (ent->item->use == Use_CloakingShield))
+		{
+			if ((ent->item->use == Use_CloakingShield) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
+				cloaking_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
+			ent->item->use(other, ent->item);
 		}
 		else if (((int)dmflags->value & DF_INSTANT_ITEMS) && (ent->item->use == Use_Double))
 		{
@@ -687,6 +695,32 @@ void Use_QuadFire (edict_t *ent, gitem_t *item)
 	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/quadfire1.wav"), 1, ATTN_NORM, 0);
 }
 
+// =====================================================================
+
+void Use_CloakingShield(edict_t* ent, gitem_t* item)
+{
+	int		timeout;
+
+	ent->client->pers.inventory[ITEM_INDEX(item)]--;
+	ValidateSelectedItem(ent);
+
+	if (cloaking_drop_timeout_hack)
+	{
+		timeout = cloaking_drop_timeout_hack;
+		cloaking_drop_timeout_hack = 0;
+	}
+	else
+	{
+		timeout = 300;
+	}
+
+	if (ent->client->cloaking_framenum > level.framenum)
+		ent->client->cloaking_framenum += timeout;
+	else
+		ent->client->cloaking_framenum = level.framenum + timeout;
+
+	gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/power1.wav"), 1, ATTN_NORM, 0);
+}
 
 //======================================================================
 
@@ -1518,7 +1552,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 //======================================================================
 
 //gitem_t	itemlist[] = 
-gitem_t    itemlist[55] =
+gitem_t    itemlist[56] =
 {
 	{
 		NULL
@@ -2742,7 +2776,7 @@ void SP_item_foodcube (edict_t *self)
 void InitItems (void)
 {
 	game.num_items = sizeof(itemlist)/sizeof(itemlist[0]) - 1;
-	int indexEndMarker = game.num_items-6;
+	int indexEndMarker = game.num_items-7;
 
 		allow_invulnerability = gi.cvar("allow_invuln", "0", CVAR_LATCH);
 		if (allow_invulnerability->value > 0) {
@@ -2876,8 +2910,34 @@ void InitItems (void)
 			/* precache */ ""
 			};
 			itemlist[indexEndMarker] = power_screen;
+			indexEndMarker++;
 		}
 
+		allow_cloaking_shield = gi.cvar("allow_cloaking_shield", "0", CVAR_LATCH);
+		if (allow_cloaking_shield->value > 0) {
+			gitem_t cloakingshield = {
+			"item_cloaking_shield",
+				Pickup_Powerup,
+				Use_CloakingShield,
+				Drop_General,
+				NULL,
+				"misc/ar3_pkup.wav",
+				"models/items/armor/shield/tris.md2", EF_ROTATE,
+				NULL,
+				/* icon */        "i_powershield",
+				/* pickup */    "Cloaking Shield",
+				/* width */        0,
+				60,
+				NULL,
+				IT_ARMOR,
+				0,
+				NULL,
+				0,
+				/* precache */ "misc/power2.wav misc/power1.wav"
+			};
+			itemlist[indexEndMarker] = cloakingshield;
+			
+		}
 }
 
 

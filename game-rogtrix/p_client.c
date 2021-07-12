@@ -709,6 +709,7 @@ void TossClientWeapon (edict_t *self)
 	qboolean	quad;
 	qboolean	doubledamage;
 	qboolean	quadfire;
+	qboolean	cloaking;
 	float		spread;
 
 
@@ -748,12 +749,19 @@ void TossClientWeapon (edict_t *self)
 	else
 		quadfire = (self->client->quadfire_framenum > (level.framenum + 10));
 
+	if (!((int)(dmflags->value) & DF_QUADFIRE_DROP))
+		cloaking = false;
+	else
+		cloaking = (self->client->cloaking_framenum > (level.framenum + 10));
+
 	
 	if (item && quad)
 		spread = 22.5;
 	else if (item && doubledamage)
 		spread = 12.5;
 	else if (item && quadfire)
+		spread = 12.5;
+	else if (item && cloaking)
 		spread = 12.5;
 	else
 		spread = 0;
@@ -801,6 +809,18 @@ void TossClientWeapon (edict_t *self)
 
 		drop->touch = Touch_Item;
 		drop->nextthink = level.time + (self->client->quadfire_framenum - level.framenum) * FRAMETIME;
+		drop->think = G_FreeEdict;
+	}
+
+	if (cloaking)
+	{
+		self->client->v_angle[YAW] += spread;
+		drop = Drop_Item(self, FindItemByClassname("item_cloaking_shield"));
+		self->client->v_angle[YAW] -= spread;
+		drop->spawnflags |= DROPPED_PLAYER_ITEM;
+
+		drop->touch = Touch_Item;
+		drop->nextthink = level.time + (self->client->cloaking_framenum - level.framenum) * FRAMETIME;
 		drop->think = G_FreeEdict;
 	}
 }
@@ -902,6 +922,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 
 	// RAFAEL
 	self->client->quadfire_framenum = 0;
+	self->client->cloaking_framenum = 0;
 
 	if (self->health < -40)
 	{       // gib

@@ -828,6 +828,7 @@ extern  cvar_t	*allow_bfg;
 extern  cvar_t	*allow_quad;
 extern  cvar_t	*allow_power_screen;
 extern  cvar_t	*allow_power_shield;
+extern  cvar_t	*allow_cloaking_shield;
 extern  cvar_t  *blaster_swap;
 extern  cvar_t  *mapcycle_always;
 extern  cvar_t  *respawn_protect_time;
@@ -1348,6 +1349,7 @@ struct gclient_s
 	float		grenade_time;
 	// RAFAEL
 	float		quadfire_framenum;
+	float		cloaking_framenum;
 	qboolean	trap_blew_up;
 	float		trap_time;
 	
