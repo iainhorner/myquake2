@@ -2679,6 +2679,7 @@ gives +1 to maximum health
 
 	// end of list marker
 	{NULL},
+	{NULL},
     {NULL},
 	{NULL},
 	{NULL},

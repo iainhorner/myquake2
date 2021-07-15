@@ -294,12 +294,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			psave;
 	int			te_sparks;
 	int			sphere_notified;	// PGM
+	int			armor_type;
 
 	if (!targ->takedamage)
 		return;
-
-	if (targ->client != NULL && targ->client->cloaking_framenum >= level.framenum)
-		damage = damage / 2;
 
 	// friendly fire avoidance
 	// if enabled you can't hurt teammates (but you can hurt yourself)
@@ -345,6 +343,12 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		te_sparks = TE_BULLET_SPARKS;
 	else
 		te_sparks = TE_SPARKS;
+
+	if ((client) && targ->client->cloaking_framenum >= level.framenum) {
+		damage *= 0.25;
+		te_sparks = TE_SCREEN_SPARKS;
+		armor_type = CLOAKING_ARMOR_SHIELD;
+	}
 
 	VectorNormalize(dir);
 
@@ -434,6 +438,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		{
 			if (mod == MOD_CHAINFIST)
 				SpawnDamage(TE_MOREBLOOD, point, normal, 255);
+			else if (armor_type == CLOAKING_ARMOR_SHIELD)
+				SpawnDamage(te_sparks, point, normal, take);
 			else
 				SpawnDamage(TE_BLOOD, point, normal, take);
 		}
