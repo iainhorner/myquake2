@@ -656,7 +656,7 @@ void G_SetStats (edict_t *ent)
 	}
 	else if (ent->client->cloaking_framenum > level.framenum)
 	{
-		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("i_powershield");
+		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex("i_powerscreen");
 		ent->client->ps.stats[STAT_TIMER] = (ent->client->cloaking_framenum - level.framenum) / 10;
 	}
 	else if (ent->client->invincible_framenum > level.framenum)

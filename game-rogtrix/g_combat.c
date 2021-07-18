@@ -445,9 +445,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		}
 		else
 			SpawnDamage(te_sparks, point, normal, take);
-		//PGM
-
-		targ->health = targ->health - take;
 
 		//PGM - spheres need to know who to shoot at
 		if (client && client->owned_sphere)

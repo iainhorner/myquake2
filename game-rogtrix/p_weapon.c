@@ -369,13 +369,12 @@ void Think_Weapon (edict_t *ent)
 	{
 
 	// Nick - hack to make trap go off if killed whilst it is 'primed'.
-	//if ((ent->client->pers.weapon && (strcmp (ent->client->pers.weapon->pickup_name, "Trap") == 0)) &&
 	if ((ent->client->pers.weapon && (Q_strcmpz (ent->client->pers.weapon->pickup_name, "Trap") == 0)) &&
         (ent->client->weaponstate == WEAPON_FIRING) && (trapfired == false)) {
 	
-	ent->client->trap_time = level.time + 5; // This stops the fly away at 100mph trap	
-	weapon_trap_fire (ent, false);
-	ent->client->trap_time = 0;
+				ent->client->trap_time = level.time + 5; // This stops the fly away at 100mph trap	
+				weapon_trap_fire (ent, false);
+				ent->client->trap_time = 0;
         }
 
 		ent->client->newweapon = NULL;
@@ -385,11 +384,13 @@ void Think_Weapon (edict_t *ent)
 	// call active weapon think routine
 	if (ent->client->pers.weapon && ent->client->pers.weapon->weaponthink)
 	{
-		is_quad = (ent->client->quad_framenum > level.framenum);
-		// RAFAEL
-		is_quadfire = (ent->client->quadfire_framenum > level.framenum);
 		//ROGUE 
 		P_DamageModifier(ent);
+
+		//is_quad = (ent->client->quad_framenum > level.framenum);
+		// RAFAEL
+		is_quadfire = (ent->client->quadfire_framenum > level.framenum);
+
 		if (ent->client->silencer_shots)
 			is_silenced = MZ_SILENCED;
 		else
@@ -1182,8 +1183,10 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	damage_radius = 120;
 	if (is_quad)
 	{
-		damage *= 4;
-		radius_damage *= 4;
+		//damage *= 4;
+		damage *= damage_multiplier;
+		//radius_damage *= 4;
+		radius_damage *= damage_multiplier;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1242,7 +1245,8 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	vec3_t	offset;
 
 	if (is_quad)
-		damage *= 4;
+		damage *= damage_multiplier;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
@@ -1433,8 +1437,8 @@ void Machinegun_Fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= damage_multiplier;
+		kick *= damage_multiplier;
 	}
 
 	for (i=1 ; i<3 ; i++)
@@ -1583,8 +1587,8 @@ void Chaingun_Fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= damage_multiplier;
+		kick *= damage_multiplier;
 	}
 
 	for (i=0 ; i<3 ; i++)
@@ -1667,8 +1671,8 @@ void weapon_shotgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= damage_multiplier;
+		kick *= damage_multiplier;
 	}
 
 	//if (deathmatch->value)
@@ -1724,8 +1728,8 @@ void weapon_supershotgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= damage_multiplier;
+		kick *= damage_multiplier;
 	}
 
 	v[PITCH] = ent->client->v_angle[PITCH];
@@ -1796,8 +1800,10 @@ void weapon_railgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		//damage *= 4;
+		damage *= damage_multiplier;
+		//kick *= 4;
+		kick *= damage_multiplier;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1883,7 +1889,7 @@ void weapon_bfg_fire (edict_t *ent)
 	}
 
 	if (is_quad)
-		damage *= 4;
+		damage *= damage_multiplier;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
@@ -1951,8 +1957,8 @@ void weapon_ionripper_fire (edict_t *ent)
 	
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= damage_multiplier;
+		kick *= damage_multiplier;
 	}
 
 	VectorCopy (ent->client->v_angle, tempang);
@@ -2022,8 +2028,8 @@ void weapon_phalanx_fire (edict_t *ent)
 	
 	if (is_quad)
 	{
-		damage *= 4;
-		radius_damage *= 4;
+		damage *= damage_multiplier;
+		radius_damage *= damage_multiplier;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -2107,7 +2113,7 @@ void weapon_trap_fire (edict_t *ent, qboolean held)
 	float	radius = TRAP_BASE_RADIUS;
 
 	if (is_quad)
-		damage *= 4;
+		damage *= damage_multiplier;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
