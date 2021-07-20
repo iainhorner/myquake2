@@ -1859,7 +1859,7 @@ void weapon_bfg_fire (edict_t *ent)
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
-	float	damage_radius = 1000;
+	float	damage_radius = 0; // 1000;
 
 //	if (deathmatch->value)
 		damage = 200;
@@ -1900,9 +1900,11 @@ void weapon_bfg_fire (edict_t *ent)
 	ent->client->v_dmg_roll = crandom()*8;
 	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	//VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet(offset, 2, 2, ent->viewheight - 2);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bfg (ent, start, forward, damage, 400, damage_radius);
+	//fire_bfg(ent, start, forward, damage, 400, damage_radius);
+	fire_bfg (ent, start, forward, damage, 1600, damage_radius);
 
 	ent->client->ps.gunframe++;
 

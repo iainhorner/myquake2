@@ -774,6 +774,7 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 
 void bfg_explode (edict_t *self)
 {
+
 	edict_t	*ent;
 	float	points;
 	vec3_t	v;
@@ -835,6 +836,7 @@ void bfg_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 200, 0, 0, MOD_BFG_BLAST);
 	T_RadiusDamage(self, self->owner, 200, other, 100, MOD_BFG_BLAST);
 
+
 	gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);
 	self->solid = SOLID_NOT;
 	self->touch = NULL;
@@ -872,7 +874,8 @@ void bfg_think (edict_t *self)
 	//	dmg = 10;
 
 	ent = NULL;
-	while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	//while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
+	while ((ent = findradius(ent, self->s.origin, 56)) != NULL)
 	{
 		if (ent == self)
 			continue;
@@ -946,7 +949,8 @@ void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, f
 	bfg->movetype = MOVETYPE_FLYMISSILE;
 	bfg->clipmask = MASK_SHOT;
 	bfg->solid = SOLID_BBOX;
-	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
+	//bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST | EF_ROCKET;
+	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST | EF_ROCKET;
 	VectorClear (bfg->mins);
 	VectorClear (bfg->maxs);
 	bfg->s.modelindex = gi.modelindex ("sprites/s_bfg1.sp2");
