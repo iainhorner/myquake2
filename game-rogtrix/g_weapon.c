@@ -833,8 +833,8 @@ void bfg_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// core explosion - prevents firing it into the wall/floor
 	if (other->takedamage)
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 200, 0, 0, MOD_BFG_BLAST);
-	T_RadiusDamage(self, self->owner, 200, other, 100, MOD_BFG_BLAST);
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 500, 0, 0, MOD_BFG_BLAST);
+	//T_RadiusDamage(self, self->owner, 200, other, 100, MOD_BFG_BLAST);
 
 
 	gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);
@@ -875,7 +875,7 @@ void bfg_think (edict_t *self)
 
 	ent = NULL;
 	//while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
-	while ((ent = findradius(ent, self->s.origin, 56)) != NULL)
+	while ((ent = findradius(ent, self->s.origin, 50)) != NULL)
 	{
 		if (ent == self)
 			continue;
