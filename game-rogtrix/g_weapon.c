@@ -875,7 +875,7 @@ void bfg_think (edict_t *self)
 
 	ent = NULL;
 	//while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
-	while ((ent = findradius(ent, self->s.origin, 50)) != NULL)
+	while ((ent = findradius(ent, self->s.origin, 40)) != NULL)
 	{
 		if (ent == self)
 			continue;
