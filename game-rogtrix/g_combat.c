@@ -438,6 +438,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		{
 			if (mod == MOD_CHAINFIST)
 				SpawnDamage(TE_MOREBLOOD, point, normal, 255);
+			else if (mod == MOD_BFG_BLAST)
+				SpawnDamage(TE_MOREBLOOD, point, normal, 255);
 			else if (armor_type == CLOAKING_ARMOR_SHIELD)
 				SpawnDamage(te_sparks, point, normal, take);
 			else

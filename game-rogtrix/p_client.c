@@ -923,8 +923,14 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	// RAFAEL
 	self->client->quadfire_framenum = 0;
 	self->client->cloaking_framenum = 0;
-
-	if (self->health < -40)
+	if (inflictor->classname == "bfg blast")
+	{
+		SpawnDamage(TE_MOREBLOOD, point, self, 255);
+		self->s.modelindex = 0; 
+		self->solid = SOLID_NOT; 
+		gi.linkentity(self);
+	}
+	else if (self->health < -40)
 	{       // gib
 		gi.sound (self, CHAN_BODY, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
 			for (n= 0; n < 4; n++)
