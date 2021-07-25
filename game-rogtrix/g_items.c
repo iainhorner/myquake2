@@ -2847,7 +2847,7 @@ void InitItems (void)
 					/* icon */		"w_bfg",
 					/* pickup */ 	"BFG10K",
 					0,
-					50,
+					25,
 					"Cells",
 					IT_WEAPON | IT_STAY_COOP,
 					WEAP_BFG,
