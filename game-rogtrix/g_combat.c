@@ -345,7 +345,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		te_sparks = TE_SPARKS;
 
 	if ((client) && targ->client->cloaking_framenum >= level.framenum) {
-		damage *= 0.25;
+		damage *= 0.5;
 		te_sparks = TE_SCREEN_SPARKS;
 		armor_type = CLOAKING_ARMOR_SHIELD;
 	}

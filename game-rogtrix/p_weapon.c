@@ -1862,11 +1862,14 @@ void weapon_bfg_fire (edict_t *ent)
 	float	damage_radius = 0; // 1000;
 
 //	if (deathmatch->value)
-		damage = 200;
+		damage = 500; // 200;
 //	else
 //		damage = 500;
 
-	if (ent->client->ps.gunframe == 9)
+	if(ent->client->ps.gunframe == 9)
+		ent->client->ps.gunframe = 15;
+
+	if (ent->client->ps.gunframe == 15)
 	{
 		// send muzzle flash
 		gi.WriteByte (svc_muzzleflash);
@@ -1882,7 +1885,7 @@ void weapon_bfg_fire (edict_t *ent)
 
 	// cells can go down during windup (from power armor hits), so
 	// check again and abort firing if we don't have enough now
-	if (ent->client->pers.inventory[ent->client->ammo_index] < 50)
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 25)
 	{
 		ent->client->ps.gunframe++;
 		return;
@@ -1904,14 +1907,14 @@ void weapon_bfg_fire (edict_t *ent)
 	VectorSet(offset, 2, 2, ent->viewheight - 2);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	//fire_bfg(ent, start, forward, damage, 400, damage_radius);
-	fire_bfg (ent, start, forward, damage, 2000, damage_radius);
+	fire_bfg (ent, start, forward, damage, 2250, damage_radius);
 
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index] -= 50;
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index] -= 25; // 50;
 }
 
 void Weapon_BFG (edict_t *ent)
