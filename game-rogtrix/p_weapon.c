@@ -1907,7 +1907,7 @@ void weapon_bfg_fire (edict_t *ent)
 	VectorSet(offset, 2, 2, ent->viewheight - 2);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	//fire_bfg(ent, start, forward, damage, 400, damage_radius);
-	fire_bfg (ent, start, forward, damage, 2250, damage_radius);
+	fire_bfg (ent, start, forward, damage, 3000, damage_radius);
 
 	ent->client->ps.gunframe++;
 
