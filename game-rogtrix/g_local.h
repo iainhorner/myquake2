@@ -562,8 +562,10 @@ typedef struct
 	int			found_goals;
 
 	int			total_frags;
-	qboolean     cd1min_played;
-	qboolean     cd3min_played;
+	qboolean    cd1min_played;
+	qboolean    cd3min_played;
+	float		emp_start_time;
+	qboolean    isEmp;
 
 
 // Nick	int			total_monsters;
@@ -898,6 +900,8 @@ extern cvar_t *sv_trap_expl_damage;
 extern cvar_t *sv_trap_expl_radius;
 extern cvar_t *sv_trap_held_damage;
 extern cvar_t *sv_trap_held_radius;
+
+extern	cvar_t* emp_duration;
 
 
 // Filetype info.

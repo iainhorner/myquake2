@@ -1234,6 +1234,11 @@ static void Nuke_Explode (edict_t *ent)
 	ent->timestamp = level.time + NUKE_QUAKE_TIME;
 	ent->nextthink = level.time + FRAMETIME;
 	ent->last_move_time = 0;
+
+
+	gi.bprintf(PRINT_HIGH, "Nuke has caused an EMP pulse, energy weapons disabled for 30 seconds.\n");
+	level.emp_start_time = level.time;
+	level.isEmp = true;
 }
 
 void nuke_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)

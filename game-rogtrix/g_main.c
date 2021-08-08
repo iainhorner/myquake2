@@ -619,6 +619,31 @@ void CheckDMRules (void)
 		}
 	}
 
+	if (level.time >= level.emp_start_time + 30) {
+		if(level.isEmp)
+			gi.bprintf(PRINT_HIGH, "energy weapons enabled\n");
+		level.isEmp = false;
+	}
+		
+	if (level.isEmp && level.time == level.emp_start_time + 3)
+		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/emp_pulse.wav"), 1, ATTN_NONE, 0);
+
+	if (level.isEmp && level.time == level.emp_start_time + 14)
+		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/cd2emp.wav"), 1, ATTN_NONE, 0);
+		
+
+	if (!level.cd3min_played && level.time >= ((timelimit->value * 60) - (3 * 60)))
+	{
+		gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd3min.wav"), 1, ATTN_NONE, 0);
+		level.cd3min_played = true;
+	}
+
+	if (!level.cd1min_played && level.time >= ((timelimit->value * 60) - (1 * 60)))
+	{
+		gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd1min.wav"), 1, ATTN_NONE, 0);
+		level.cd1min_played = true;
+	}
+
 	if (fraglimit->value)
 	{
 		for (i=0 ; i<maxclients->value ; i++)
@@ -626,18 +651,6 @@ void CheckDMRules (void)
 			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
-
-			if (!level.cd3min_played && level.time >= ((timelimit->value * 60) - (3 * 60)))
-			{
-				gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd3min.wav"), 1, ATTN_NONE, 0);
-				level.cd3min_played = true;
-			}
-
-			if (!level.cd1min_played && level.time >= ((timelimit->value * 60) - (1 * 60)))
-			{
-				gi.sound(world, CHAN_AUTO, gi.soundindex("ut_sounds/cd1min.wav"), 1, ATTN_NONE, 0);
-				level.cd1min_played = true;
-			}
 
 			if (cl->resp.score >= fraglimit->value)
 			{

@@ -1222,6 +1222,11 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex("ut_sounds/megakill.wav");
 	gi.soundindex("ut_sounds/ultrakill.wav");
 	gi.soundindex("ut_sounds/monsterkill.wav");
+
+	//emp sounds
+	gi.soundindex("emp/trigger_click.wav");
+	gi.soundindex("emp/emp_pulse.wav");
+	gi.soundindex("emp/cd2emp.wav");
 	
 
 	// sexed sounds

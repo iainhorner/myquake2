@@ -1411,6 +1411,7 @@ void Machinegun_Fire (edict_t *ent)
 	int			kick = 2;
 	vec3_t		offset;
 
+
 	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
 		ent->client->machinegun_shots = 0;
@@ -1856,6 +1857,7 @@ BFG10K
 
 void weapon_bfg_fire (edict_t *ent)
 {
+
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
@@ -1919,6 +1921,16 @@ void weapon_bfg_fire (edict_t *ent)
 
 void Weapon_BFG (edict_t *ent)
 {
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+		gi.cprintf(ent, PRINT_HIGH, "BFG disabled by nuke EMP pulse!\n");
+		return;
+	}
+
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
 	static int	fire_frames[]	= {9, 17, 0};
 
@@ -1999,6 +2011,18 @@ void weapon_ionripper_fire (edict_t *ent)
 
 void Weapon_Ionripper (edict_t *ent)
 {
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+
+	    gi.cprintf(ent, PRINT_HIGH, "Ionripper disabled by nuke EMP pulse\n");
+
+		return;
+	}
+
 	static int pause_frames[] = {36, 0};
 	static int fire_frames[] = {5, 0};
 
@@ -2418,6 +2442,7 @@ void Weapon_ChainFist(edict_t* ent)
 
 void weapon_tracker_fire(edict_t* self)
 {
+
 	vec3_t		forward, right;
 	vec3_t		start;
 	vec3_t		end;
@@ -2487,6 +2512,16 @@ void weapon_tracker_fire(edict_t* self)
 
 void Weapon_Disintegrator(edict_t* ent)
 {
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+		gi.cprintf(ent, PRINT_HIGH, "Disintegrator disabled by nuke EMP pulse\n");
+		return;
+	}
+
 	static int	pause_frames[] = { 14, 19, 23, 0 };
 	//	static int	fire_frames[]	= {7, 0};
 	static int	fire_frames[] = { 5, 0 };
@@ -2505,6 +2540,7 @@ ETF RIFLE
 */
 void weapon_etf_rifle_fire(edict_t* ent)
 {
+
 	vec3_t	forward, right, up;
 	vec3_t	start, tempPt;
 	int		damage;
@@ -2598,6 +2634,8 @@ void weapon_etf_rifle_fire(edict_t* ent)
 
 void Weapon_ETF_Rifle(edict_t* ent)
 {
+
+
 	static int	pause_frames[] = { 18, 28, 0 };
 	static int	fire_frames[] = { 6, 7, 0 };
 	//	static int	idle_seq;
@@ -2607,6 +2645,7 @@ void Weapon_ETF_Rifle(edict_t* ent)
 
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
+
 		if (ent->client->pers.inventory[ent->client->ammo_index] <= 0)
 			ent->client->ps.gunframe = 8;
 	}
@@ -2705,6 +2744,16 @@ void Heatbeam_Fire(edict_t* ent)
 
 void Weapon_Heatbeam(edict_t* ent)
 {
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+		gi.cprintf(ent, PRINT_HIGH, "Heatbeam disabled by nuke EMP pulse\n");
+		return;
+	}
+
 	//	static int	pause_frames[]	= {38, 43, 51, 61, 0};
 	//	static int	fire_frames[]	= {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0};
 	static int	pause_frames[] = { 35, 0 };
