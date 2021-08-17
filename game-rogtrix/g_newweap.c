@@ -1236,7 +1236,7 @@ static void Nuke_Explode (edict_t *ent)
 	ent->last_move_time = 0;
 
 
-	gi.bprintf(PRINT_HIGH, "Nuke has caused an EMP pulse, energy weapons disabled for 30 seconds.\n");
+	gi.bprintf(PRINT_HIGH, "Nuke has caused an EMP pulse, energy weapons disabled for 60 seconds.\n");
 	level.emp_start_time = level.time;
 	level.isEmp = true;
 }

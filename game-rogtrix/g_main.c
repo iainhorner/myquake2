@@ -619,7 +619,7 @@ void CheckDMRules (void)
 		}
 	}
 
-	if (level.time >= level.emp_start_time + 30) {
+	if (level.time >= level.emp_start_time + 60) {
 		if(level.isEmp)
 			gi.bprintf(PRINT_HIGH, "energy weapons enabled\n");
 		level.isEmp = false;
@@ -628,7 +628,7 @@ void CheckDMRules (void)
 	if (level.isEmp && level.time == level.emp_start_time + 3)
 		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/emp_pulse.wav"), 1, ATTN_NONE, 0);
 
-	if (level.isEmp && level.time == level.emp_start_time + 14)
+	if (level.isEmp && level.time == level.emp_start_time + 44)//  cd2emp.wav takes 16 seconds to run
 		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/cd2emp.wav"), 1, ATTN_NONE, 0);
 		
 

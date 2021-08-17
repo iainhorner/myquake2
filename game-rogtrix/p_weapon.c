@@ -1379,6 +1379,19 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 
 void Weapon_HyperBlaster (edict_t *ent)
 {
+
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+
+		gi.cprintf(ent, PRINT_HIGH, "HyperBlaster disabled by nuke EMP pulse\n");
+
+		return;
+	}
+
 	static int	pause_frames[]	= {0};
 	static int	fire_frames[]	= {6, 7, 8, 9, 10, 11, 0};
 
