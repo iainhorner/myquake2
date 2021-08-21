@@ -901,7 +901,7 @@ extern cvar_t *sv_trap_expl_radius;
 extern cvar_t *sv_trap_held_damage;
 extern cvar_t *sv_trap_held_radius;
 
-extern	cvar_t* emp_duration;
+extern	cvar_t* emp_time;
 
 
 // Filetype info.

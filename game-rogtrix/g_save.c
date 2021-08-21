@@ -168,7 +168,8 @@ void InitGame (void)
 	password = gi.cvar ("password", "", CVAR_USERINFO);
 	spectator_password = gi.cvar ("spectator_password", "", 0);
 	filterban = gi.cvar ("filterban", "1", 0);
-	respawn_protect_time = gi.cvar("respawn_protect_time", "0", 0);
+	respawn_protect_time = gi.cvar("respawn_protect_time", "0", CVAR_SERVERINFO);
+	emp_time = gi.cvar("emp_time", "30", CVAR_SERVERINFO);
 
 	g_select_empty = gi.cvar ("g_select_empty", "0", CVAR_ARCHIVE);
 

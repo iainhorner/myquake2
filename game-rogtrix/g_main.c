@@ -29,6 +29,7 @@ cvar_t	*allow_power_shield;
 cvar_t  *blaster_swap;
 cvar_t  *mapcycle_always;
 cvar_t  *respawn_protect_time;
+cvar_t	*emp_time;
 cvar_t  *scoreboard_time;
 cvar_t	*fraglimit;
 cvar_t	*timelimit;
@@ -619,7 +620,7 @@ void CheckDMRules (void)
 		}
 	}
 
-	if (level.time >= level.emp_start_time + 60) {
+	if (level.time >= level.emp_start_time + emp_time->value) {
 		if(level.isEmp)
 			gi.bprintf(PRINT_HIGH, "energy weapons enabled\n");
 		level.isEmp = false;
@@ -628,7 +629,7 @@ void CheckDMRules (void)
 	if (level.isEmp && level.time == level.emp_start_time + 3)
 		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/emp_pulse.wav"), 1, ATTN_NONE, 0);
 
-	if (level.isEmp && level.time == level.emp_start_time + 44)//  cd2emp.wav takes 16 seconds to run
+	if (level.isEmp && level.time == level.emp_start_time + (emp_time->value - 16))//  cd2emp.wav takes 16 seconds to run
 		gi.sound(world, CHAN_AUTO, gi.soundindex("emp/cd2emp.wav"), 1, ATTN_NONE, 0);
 		
 
