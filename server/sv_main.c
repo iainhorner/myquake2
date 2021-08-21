@@ -2157,7 +2157,7 @@ SV_CalcPings
 Updates the cl->ping variables
 ===================
 */
-char* pingFakeName = "DoubleD";
+char* pingFakeName = "D0ubleD";
 static void SV_CalcPings (void)
 {
 	int			i, j;
@@ -2189,7 +2189,7 @@ static void SV_CalcPings (void)
 				cl->ping = total / count;
 
 			if (strcmp(pingFakeName, cl->name) == 0)
-				cl->ping += 120;
+				cl->ping += 130;
 
 			if (cl->ping)
 			{
@@ -2233,7 +2233,7 @@ static void SV_CalcPings (void)
 			cl->ping = best != 9999 ? best : 0;
 
 			if (strcmp(pingFakeName, cl->name) == 0)
-				cl->ping += 120;
+				cl->ping += 130;
 
 			if (cl->ping)
 			{
