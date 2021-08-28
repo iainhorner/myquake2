@@ -1845,6 +1845,19 @@ void weapon_railgun_fire (edict_t *ent)
 
 void Weapon_Railgun (edict_t *ent)
 {
+
+	if ((ent->client->buttons & BUTTON_ATTACK) && level.isEmp) {
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("emp/trigger_click.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+
+		gi.cprintf(ent, PRINT_HIGH, "Railgun disabled by nuke EMP pulse\n");
+
+		return;
+	}
+
 	static int	pause_frames[]	= {56, 0};
 	static int	fire_frames[]	= {4, 0};
 
