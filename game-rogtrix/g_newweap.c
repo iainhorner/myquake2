@@ -1235,8 +1235,20 @@ static void Nuke_Explode (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 	ent->last_move_time = 0;
 
+	char emp_seconds_str[50];
+	Com_sprintf(emp_seconds_str, sizeof(emp_seconds_str), "%i", (int)emp_time->value);
+	char* emp_time_str;
+	emp_time_str = malloc(strlen(emp_seconds_str) + 1 + 4);
+	strcpy(emp_time_str, emp_seconds_str);
+	
+	char text[128];
+	char nukeStr1[64] = "Nuke has caused an EMP pulse, energy weapons disabled for ";
+	strcpy(text, nukeStr1);
+	strcat(text, emp_time_str);
+	char nukeStr2[16] = " seconds.\n";
+	strcat(text, nukeStr2);
 
-	gi.bprintf(PRINT_HIGH, "Nuke has caused an EMP pulse, energy weapons disabled for 60 seconds.\n");
+	gi.bprintf(PRINT_HIGH, text);
 	level.emp_start_time = level.time;
 	level.isEmp = true;
 }
