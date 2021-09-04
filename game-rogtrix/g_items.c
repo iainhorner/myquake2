@@ -1973,7 +1973,7 @@ always owned, never in the world
 		Drop_Weapon,										// drop function
 		Weapon_Heatbeam,									// weapon think function
 		"misc/w_pkup.wav",									// pick up sound
-		"models/weapons/g_beamer/tris.md2", EF_ROTATE,		// world model, world model flags
+		"models/weapons/g_test_beamer/tris.md2", EF_ROTATE,		// world model, world model flags
 		"models/weapons/v_beamer/tris.md2",					// view model
 		"w_heatbeam",											// icon
 		"Plasma Beam",											// name printed when picked up 
