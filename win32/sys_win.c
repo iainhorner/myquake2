@@ -1338,8 +1338,8 @@ void FixWorkingDirectory (void)
 			return;
 	}
 
-	if (strlen(curDir) > (MAX_OSPATH - MAX_QPATH))
-		Sys_Error ("Current path is too long. Please move your Quake II installation to a shorter path.");
+	//if (strlen(curDir) > (MAX_OSPATH - MAX_QPATH))
+	//	Sys_Error ("Current path is too long. Please move your Quake II installation to a shorter path.");
 
 skipPathCheck:
 

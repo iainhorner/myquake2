@@ -677,6 +677,7 @@ static const char *SV_StatusString (void)
 
 	Com_sprintf(player, sizeof(player), "%i %i \"%s\"\n",
 		0, 120, "WallFly[BZZZ]");
+	playerLength = (int)strlen(player);
 	if (!(statusLength + playerLength >= sizeof(status)))
 		strcpy(status + statusLength, player);
 
