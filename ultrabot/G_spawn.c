@@ -349,6 +349,8 @@ void ED_CallSpawn (edict_t *ent)
 		ent->classname = "weapon_railgun";
 	if (!strcmp(ent->classname, "weapon_hyperblaster"))
 		ent->classname = "weapon_chaingun";
+	if (!strcmp(ent->classname, "ammo_cells"))
+		ent->classname = "ammo_bullets";
 
 	// check item spawn functions
 	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
@@ -642,12 +644,10 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	ent = NULL;
 	inhibit = 0;
 
-	int ctr = 0;
 
 // parse ents
 	while (1)
 	{
-		ctr++;
 		// parse the opening brace	
 		com_token = COM_Parse (&entities);
 		if (!entities)
@@ -660,10 +660,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		else
 			ent = G_Spawn ();
 
-		Com_Printf("Entity is %s\n", ent->classname);
-
 		entities = ED_ParseEdict (entities, ent);
-		
+
 		// yet another map hack
 		if (!Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27"))
 			ent->spawnflags &= ~SPAWNFLAG_NOT_HARD;

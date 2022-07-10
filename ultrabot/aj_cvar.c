@@ -466,7 +466,7 @@ cvar_t	*invisible_dmstarts;
 void lithium_defaults(void)
 {
 	use_runes = gi.cvar("use_runes", "1", 0);
-	use_hook = gi.cvar("use_hook", "1", 0);
+	use_hook = gi.cvar("use_hook", "0", 0);
 	use_vwep = gi.cvar("use_vwep", "1", CVAR_SERVERINFO|CVAR_ARCHIVE);
 	mapqueue = gi.cvar("mapqueue", "maps.lst", 0);
 	map_random = gi.cvar("map_random", "1", 0);         // overide ridah's one?
@@ -812,7 +812,7 @@ void lithium_defaults(void)
 
 	use_onegun = gi.cvar("use_onegun", "0", 0);
 
-	use_lasers = gi.cvar("use_lasers", "1", 0);
+	use_lasers = gi.cvar("use_lasers", "0", 0);
 	bot_lava_mod = gi.cvar("bot_lava_mod", "1.0", 0);
 	bot_slime_mod = gi.cvar("bot_slime_mod", "1.0", 0);
 
